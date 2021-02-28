@@ -1,0 +1,60 @@
+What is actually done?
+
+Test effect of frequency on gender subspace:
+need: GloVe, "One billion English word bechmark", set of gender word pairs P,
+1. Train GloVe on "One billion english word benchmark"
+2. for all embeddings of pairs in P: calculate difference vector
+3. for all difference vectors: compute pairwise cosine similarity
+Alter Dataset
+4. sample one gender word pair & select single word
+5. from "One billion English word benchmark" sample sentences with that word twice
+6. Train GloVe on altered Corpus
+7. for all pairs in P: calculate difference vector
+8. for all difference vectors: compute pairwise cosine similarity
+Compare both similarity matrices, focus on difference in sampled gender pair
+9. calculate norm of individual difference vectors
+10. calculate cosine similarity between difference vectors
+
+Double Hard Debias:
+need: Word embeddings, top 500 Male biased words set Wm, top 500 Female biased words set Wf
+1. for all word embeddings: decentralize all words
+2. for all decentralized embeddings: compute PCA
+3. for all principal components:
+   male embedding = decentralized embedding - projected original (?) embedding into direction of PC
+   female embedding = decentralized embedding - projected original (?) embedding into direction of PC
+   for all new male embeddings: HardDebias
+   for all new female embeddings: HardDebias
+   for all HardDebiased embeddings: KMeansClustering (2)
+   for clustered embeddings: compute gender alignment accuracy
+4. store evaluations for each principal components
+5. evaluate which PC lead to most random cluster (evaluation smallest (close to 0.5), used second PC)
+6. for all decentralized embeddings: remove that PC-direction
+7. for all new embeddings: HardDebias
+
+Gender alignment accuracy/ Neighborhood Metric:
+need: k (=1000) most biased female and male word's embedding (cosine similarity embedding & gender direction),
+1. assign ground truth gender labels: 0 = male, 1 = female
+2. run KMeans on embeddings
+3. compute alignment score: cluster assignment vs ground truth gender label
+4. alignment score = max(a, 1-a)
+
+Calculate k most biased male & female words:
+need: Word2Vec, Corpus, set of gender word pairs P
+1. Train Word2Vec on Corpus
+2. normalize all vectors
+3. for all embeddings of pairs in P: calculate difference vector
+4. calculate first PC of difference vectors = gender direction g
+5. for all word embeddings: calculate cosine similarity embedding and g
+6. take k embeddings with max similarity (same direction - one gender ?)
+7. take k embeddings with min similarity (opposed direction - other gender ?)
+
+?? Hard Debias ??
+need: set of gender neutral words N, set of male-female word pairs D (= set of gender word pairs P?),
+300-dim GloVe, "2017 January dump of English Wikipedia",
+1. Train GloVe on "2017 January dump of English Wikipedia"
+-- 2. Bolukbasi 2016: normalize all embeddings
+2. for all embeddings of pairs in D: normalize vector
+Get Gender subspace: Bolukbasi 2016 uses PCA, Wang et. al. SVD
+-- 3. Bolukbasi 2016: compute first principal component g for difference vectors
+3. compute first row of SVD on (embedding - norm)^T * (embedding - norm)/(size of male-female word pair) matrix g
+4. for all neutral words in N: remove gender direction
