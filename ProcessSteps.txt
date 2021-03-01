@@ -22,8 +22,8 @@ need: Word embeddings, top 500 Male biased words set Wm, top 500 Female biased w
 3. for all principal components:
    male embedding = decentralized embedding - projected original (?) embedding into direction of PC
    female embedding = decentralized embedding - projected original (?) embedding into direction of PC
-   for all new male embeddings: HardDebias
-   for all new female embeddings: HardDebias
+   with all new male embeddings: HardDebias
+   with all new female embeddings: HardDebias
    for all HardDebiased embeddings: KMeansClustering (2)
    for clustered embeddings: compute gender alignment accuracy
 4. store evaluations for each principal components
@@ -48,13 +48,56 @@ need: Word2Vec, Corpus, set of gender word pairs P
 6. take k embeddings with max similarity (same direction - one gender ?)
 7. take k embeddings with min similarity (opposed direction - other gender ?)
 
-?? Hard Debias ??
+Hard Debias
 need: set of gender neutral words N, set of male-female word pairs D (= set of gender word pairs P?),
 300-dim GloVe, "2017 January dump of English Wikipedia",
 1. Train GloVe on "2017 January dump of English Wikipedia"
--- 2. Bolukbasi 2016: normalize all embeddings
-2. for all embeddings of pairs in D: normalize vector
-Get Gender subspace: Bolukbasi 2016 uses PCA, Wang et. al. SVD
--- 3. Bolukbasi 2016: compute first principal component g for difference vectors
-3. compute first row of SVD on (embedding - norm)^T * (embedding - norm)/(size of male-female word pair) matrix g
-4. for all neutral words in N: remove gender direction
+2. Get Gender subspace: Singular Value Decomposition
+-- Bolukbasi 2016: normalize all embeddings --
+   2.1 for all embeddings of pairs in D: mü = embedding = embedding/ 2
+   2.2 1/2 * for all computed mü: calculate sum of:
+       for all all word embeddings: sum inner product of (embedding - mü : difference vector(?))
+   2.3 take first row of SVD
+3. for all neutral words' embeddings: projection onto gender direction
+4. for all neutral words' embeddings: subtract projection from original vector
+-- Bolukbasi 2016: Equalize words
+
+Determine Gender Neutral Words:
+needs: linear Classifier (Support Vector Machine), Dataset, dictionary Definitions (Wordnet), set of gender words
+1. get word definitions including gender words
+2. manually select words truly gender specific !subjective!
+3. Train linear Classifier (with regularization parameter 1)
+4. run Classifier on Dataset
+5. add words to gender specific words that were newly labelled as such by Classifier
+6. subtract gender specific words from dataset
+
+Evaluation:
+Comparison with: Original GloVe, debiased Gender-Neutral GN-GloVe, GN-GloVe without gender dimension,
+Gender preserving GP-GloVe, GP-GN-GloVe, Hard-GloVe, Strong Hard-Glove without gender
+Evaluation:
+Coreference Resolution:
+needs: WinoBias PRO & ANTI sentences, Coreference Resolution Model, OntoNodes 5.0 dataset
+1. Train embeddings according to different algorithms
+2. for each embeddings: train & test Coreference Resolution Model on OntoNodes data
+3. obtain performance measure (accuracy)
+4. for each embeddings: train & test Coreference Resolution Model on WinoBias data
+5. obtain performance measure (accuracy) on average & for PRO & ANTI sentences individually
+6. compute difference in performance between PRO & ANTI sentences
+Word Embeddings Association Test:
+needs: two sets of target words, two gender attribute sets (=names)
+1. compute differential association of target words and gender attribute sets
+2. calculate p values
+Neighborhood Metric: (used to create Double Hard GloVe so unfair comparison?)
+see above:
+1. for all embeddings: perform Neighborhood Metric for k = 100/500/1000
+2. for all embeddings: perform tNSE projection
+Retaining Word Semantics:
+Word Analogy:
+needs: MSR word analogy task, Google word analogy
+1. for all embeddings: perform MSR word analogy task
+2. for all embeddings: perform Google word analogy task
+3. for each task: compute accuracy (=correct answer assigned max score)
+Concept Categorization:
+needs: Almubaresh-Poesio, ESSLLI 2008, Battig 1969, BLESS datasets
+1. for all embeddings: perform KMeansClustering
+2. for each clustering: compute purity (= fraction correctly classified)
