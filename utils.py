@@ -75,3 +75,13 @@ class utils():
         """Checks if a string contains special characters(except "_")"""
         special_characters = "!@#$%^&*()-+?=,<>/."
         return any(char in special_characters for char in word)
+    
+    def debias_gn(wv):
+    for v in wv:
+        assert(len(v) == 300)
+    
+    wv = wv[:,:-1]
+
+    for v in wv:
+        assert(len(v) == 299)
+    return wv
