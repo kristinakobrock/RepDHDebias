@@ -1,205 +1,77 @@
-import sklearn
-import random as random
-from scipy.stats import norm
-import statistics as stat
+import urllib.request
+import numpy as np
 
-class weat(object):
+class utils():
+    """A collection of useful functions"""
+    
+    def read_embedding(url, skip_first = False):
+        """Function to read out an embedding
+        Input: url: url to embedding
 
-    def __init__(self, concept1,concept2,stereotype1,stereotype2, iterations, embedding, w2id):
-        self.concept1 = concept1
-        self.concept2 = concept2
-        self.stereotype1 = stereotype1
-        self.stereotype2 = stereotype2
-        self.iterations = iterations
-        self.embedding = embedding
-        self.w2id = w2id
+        Returns: vocab: list of words in the embedding
+                 w2id: dictionary mapping words to ids
+                 embedding: array storing the word vectors,
+                               row corresponds to word id"""
+        # Open url
+        data = urllib.request.urlopen(url)
+        vocab = []
+        embedding = []
 
-    def getPValueAndEffect(self):
-        pvalue = 0
-        effect_size = 0
-        sd = 0
-        testStatistic = self.getTestStatistic(self.concept1,self.concept2,self.stereotype1,self.stereotype2, self.embedding, self.w2id)
-        nullDist = self.nullDistribution(self.concept1, self.concept2, self.stereotype1, self.stereotype2, self.iterations, self.embedding, self.w2id)
-        entireDistribution = self.getEntireDistribution(self.concept1, self.concept2, self.stereotype1, self.stereotype2, self.iterations, self.embedding, self.w2id)
+        # Each line contains one word and its embedding
+        for i, line in enumerate(data):
+            if skip_first:
+                if i == 0:
+                    continue
+            #if len(line) == 301:
+            line = line.decode()
+            # Split by spaces
+            split = line.split()
+            # First element(== the word) is added to vocabulary
+            vocab.append(split[0])
+            # All other elements(embedding vectors) are added to vectors
+            embedding.append([float(elem) for elem in split[1:]])
 
-        pvalue = 1-self.calculateCumulativeProbability(nullDist, testStatistic)
-        effect_size = self.effectSize(entireDistribution, testStatistic)
-        sd = stat.stdev(nullDist)
-        return pvalue, effect_size, sd
+        # Create a dictionary with word-id pairs based on the order
+        w2id = {w: i for i, w in enumerate(vocab)}
+        # Vectors are converted into an array
+        embedding = np.array(embedding).astype(float)
 
-    def nullDistribution(self, concept1, concept2, stereotype1, stereotype2, iterations, embedding, w2id):
-
-        # permute concepts and for each permutation calculate getTestStatistic and save it in your distribution
-        bothConcepts = concept1 + concept2
-        print("Generating null distribution...")
-
-        stereotype1NullMatrix = []
-        stereotype2NullMatrix = []
-
-        for attribute in stereotype1:
-            similarity_list = []
-            stereotype1Embedding = embedding[w2id[attribute]]
-
-            for word in bothConcepts:
-                nullEmbedding = embedding[w2id[word]]
-                similarity = self.cosineSimilarity(nullEmbedding, stereotype1Embedding)
-                similarity_list.append(similarity)
-            stereotype1NullMatrix.append(similarity_list)
+        return vocab, w2id, embedding
 
 
-        for attribute in stereotype2:
-            similarity_list = []
-            stereotype2Embedding = embedding[w2id[attribute]]
+    def restrict_vocab(vocab, w2id, embedding):
+        """Limits the vocab by removing words containing digits or special characters
+        Input: vocab: list of words in the embedding
+               w2id: dictionary mapping words to ids
+               embedding: array storing the word vectors
 
-            for word in bothConcepts:
-                nullEmbedding = embedding[w2id[word]]
-                similarity = self.cosineSimilarity(nullEmbedding, stereotype2Embedding)
-                similarity_list.append(similarity)
-            stereotype2NullMatrix.append(similarity_list)
+        Returns: limit_vocab: list of words in vocab that do not include digits or special characters
+                 limit_w2id: dictionary mapping words in limit_vocab to new ids
+                 limit_embedding: array storing the word vectors of the words in limit_vocab only"""
+        limit_vocab = []
+        limit_embedding = []
 
-        #Assuming both concepts have the same length
-        setSize = int(len(bothConcepts)/2)
-        print("Number of permutations ", iterations)
-        toShuffle = list(range(0, len(bothConcepts)))
-        distribution = []
+        for i, word in enumerate(vocab[:50000]): # hoping that this gives us the most common words
+            # If word includes either a digit or a special character move on to next word
+            if (utils.hasDigit(word) or utils.hasSpecialChar(word)):
+                continue
+            # Else add word to limit_vocab and its embedding to limit_embedding    
+            limit_vocab.append(word)
+            limit_embedding.append(embedding[w2id[word]])
 
-        for iter in range(iterations):
-            random.shuffle(toShuffle)
-        	#calculate mean for each null shuffle
-            meanSimilaritycon1str1 = 0
-            meanSimilaritycon1str2 = 0
-            meanSimilaritycon2str1 = 0
-            meanSimilaritycon2str2 = 0
+        # Convert embedding into an array    
+        limit_embedding = np.array(limit_embedding).astype(float)
+        # Create new dictionary containing only the words in limit_vocab and their new ids
+        limit_w2id = {word: i for i, word in enumerate(limit_vocab)}
 
-            for i in range(len(stereotype1)):
-                for j in range(setSize):
-                    meanSimilaritycon1str1 = meanSimilaritycon1str1 + stereotype1NullMatrix[i][toShuffle[j]]
+        return limit_vocab, limit_w2id, limit_embedding
+    
+    
+    def hasDigit(word):
+        """Checks if a string contains any digits"""
+        return any(char.isdigit() for char in word)
 
-            for i in range(len(stereotype2)):
-                for j in range(setSize):
-                    meanSimilaritycon1str2 = meanSimilaritycon1str2 + stereotype2NullMatrix[i][toShuffle[j]]
-
-            for i in range(len(stereotype1)):
-                for j in range(setSize):
-                    meanSimilaritycon2str1 = meanSimilaritycon2str1 + stereotype1NullMatrix[i][toShuffle[j+setSize]]
-
-            for i in range(len(stereotype2)):
-                for j in range(setSize):
-                    meanSimilaritycon2str2 = meanSimilaritycon2str2 + stereotype2NullMatrix[i][toShuffle[j+setSize]]
-
-            meanSimilaritycon1str1 = meanSimilaritycon1str1/(len(stereotype1)*setSize)
-            meanSimilaritycon1str2 = meanSimilaritycon1str2/(len(stereotype2)*setSize)
-            meanSimilaritycon2str1 = meanSimilaritycon2str1/(len(stereotype1)*setSize)
-            meanSimilaritycon2str2 = meanSimilaritycon2str2/(len(stereotype2)*setSize)
-
-            #come back here later
-            distribution.append((meanSimilaritycon1str1 - meanSimilaritycon1str2) - meanSimilaritycon2str1 + meanSimilaritycon2str2)
-
-        return distribution
-
-    def calculateCumulativeProbability(self,nullDistribution, testStatistic):
-        cumulative = -100
-        nullDistribution.sort()
-
-        
-        d = norm(loc = stat.mean(nullDistribution), scale = stat.stdev(nullDistribution))
-        cumulative = d.cdf(testStatistic)
-
-        return cumulative
-
-    def effectSize(self,array, mean):
-        effect = mean/stat.stdev(array)
-        return effect
-
-    def getTestStatistic(self, concept1, concept2, stereotype1, stereotype2, embedding, w2id):
-
-        differenceOfMeans =0
-        differenceOfMeansConcept1 =0
-        differenceOfMeansConcept2 =0
-
-        #concept 1 computations
-        for word in concept1:
-            concept1_embedding = embedding[w2id[word]]
-
-            meanConcept1Stereotype1=0
-            for attribute in stereotype1:
-                stereotype1_embedding = embedding[w2id[attribute]]
-                similarity = self.cosineSimilarity(concept1_embedding, stereotype1_embedding)
-                meanConcept1Stereotype1 = meanConcept1Stereotype1 + similarity
-
-            meanConcept1Stereotype1 = meanConcept1Stereotype1/len(stereotype1)
-
-
-            meanConcept1Stereotype2=0
-            for attribute in stereotype2:
-                stereotype2_embedding = embedding[w2id[attribute]]
-                similarity = self.cosineSimilarity(concept1_embedding, stereotype2_embedding)
-                meanConcept1Stereotype2 = meanConcept1Stereotype2 + similarity
-
-            meanConcept1Stereotype2 = meanConcept1Stereotype2/len(stereotype2)
-
-            differenceOfMeansConcept1 = differenceOfMeansConcept1+ meanConcept1Stereotype1 - meanConcept1Stereotype2
-
-        #effect size computations mean S(x,A,B)
-        differenceOfMeansConcept1 = differenceOfMeansConcept1/len(concept1)
-
-        #concept 2 computations
-        for word in concept2:
-            concept2_embedding = embedding[w2id[word]]
-
-            meanConcept2Stereotype1=0
-            for attribute in stereotype1:
-                stereotype1_embedding = embedding[w2id[attribute]]
-                similarity = self.cosineSimilarity(concept2_embedding, stereotype1_embedding)
-                meanConcept2Stereotype1 = meanConcept2Stereotype1 + similarity
-
-            meanConcept2Stereotype1 = meanConcept2Stereotype1/len(stereotype1)
-
-            meanConcept2Stereotype2=0
-            for attribute in stereotype2:
-                stereotype2_embedding = embedding[w2id[attribute]]
-                similarity = self.cosineSimilarity(concept2_embedding, stereotype2_embedding)
-                meanConcept2Stereotype2 = meanConcept2Stereotype2 + similarity
-
-            meanConcept2Stereotype2 = meanConcept2Stereotype2/len(stereotype2)
-
-            differenceOfMeansConcept2 = differenceOfMeansConcept2+ meanConcept2Stereotype1 - meanConcept2Stereotype2
-
-        #effect size computations mean S(x,A,B)
-        differenceOfMeansConcept2 = differenceOfMeansConcept2/len(concept2)
-        differenceOfMeans = differenceOfMeansConcept1 - differenceOfMeansConcept2
-
-        #used for effect size computations before dividing by standard deviation
-        print("The difference of means is ", differenceOfMeans)
-        return differenceOfMeans
-
-    def getEntireDistribution(self, concept1, concept2, stereotype1, stereotype2, iterations, embedding, w2id):
-
-        bothConcepts = concept1 + concept2
-        distribution = []
-        print("Getting the entire distribution")
-
-        for word in bothConcepts:
-            conceptEmbedding = embedding[w2id[word]]
-            similarityToStereotype1 = 0
-            similarityToStereotype2 = 0
-
-            for attribute in stereotype1:
-                stereotype1Embedding = embedding[w2id[attribute]]
-                similarityToStereotype1 = similarityToStereotype1 + self.cosineSimilarity(conceptEmbedding, stereotype1Embedding)
-            similarityToStereotype1 = similarityToStereotype1/len(stereotype1)
-
-            for attribute in stereotype2:
-                stereotype2Embedding = embedding[w2id[attribute]]
-                similarityToStereotype2 = similarityToStereotype2 + self.cosineSimilarity(conceptEmbedding, stereotype2Embedding)
-            similarityToStereotype2 = similarityToStereotype2/len(stereotype2)
-
-            distribution.append(similarityToStereotype1 - similarityToStereotype2)
-
-        return distribution
-
-    def cosineSimilarity(self,a, b):
-        a = [a]
-        b = [b]
-        r = sklearn.metrics.pairwise.cosine_similarity(a,b)
-        return r[0][0]
+    def hasSpecialChar(word):
+        """Checks if a string contains special characters(except "_")"""
+        special_characters = "!@#$%^&*()-+?=,<>/."
+        return any(char in special_characters for char in word)
