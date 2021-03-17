@@ -1,0 +1,124 @@
+---
+title             : "Does Double-Hard Debias Keep its Promises? - A Replication Study"
+shorttitle        : "Replication: Wang et al. (2020)"
+
+author: 
+  - name          : "Kristina Kobrock"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    email         : "kkobrock@uni-osnabrueck.de"
+    role:         # Contributorship roles (e.g., CRediT, https://casrai.org/credit/)
+      - müssen wir natürlich nicht ausfüllen
+     
+      
+  - name          : "Meike Korsten"
+    affiliation   : "1"
+    role:
+      - ...
+      
+  - name          : "Sonja Börgerding"
+    affiliation   : "1"
+    role:
+      - ...
+
+affiliation:
+  - id            : "1"
+    institution   : "University of Osnabrück"
+
+  
+keywords          : "keywords"
+wordcount         : "X"
+
+bibliography      : ["r-references.bib"]
+
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : yes
+mask              : no
+draft             : no
+
+documentclass     : "apa6"
+classoption       : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r setup, include = FALSE}
+library("papaja")
+r_refs("r-references.bib")
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+Just edit the text! There are several websites that help with (r)markdown, e.g. https://rmarkdown.rstudio.com/.
+If you don't want to edit directly, but rather comment use:
+<!-- KK: This is a comment. It won't be included in the exported file. -->
+Cite using: Wang et al. [-@wang2020doublehard] said that... or simply blablabla [@wang2020doublehard]. References must be added to r-references.bib file. 
+
+## Introduction
+- shall we include an abstract?
+
+### Bias in Embeddings
+- some text on bias in embeddings and why it's useful to do research in that field
+- summary of related approaches (or put it in the discussion ?)
+
+### Motivation
+- rough description of the specific study (Wang et al.) & motivation of replication attempt (maybe some general remarks on the need for replication studies)
+
+
+## Implementation
+- task description
+- explanation of model and training choices
+
+### Datasets and Preliminaries
+
+### Hard Debias
+
+### Double-Hard Debias
+
+
+## Evaluation 
+- stick to the paper
+
+### Baselines
+
+### Evaluation of Debiasing Performance
+### Debiasing in Downstream Applications
+#### Coreference Resolution
+- no replication possible, no code provided
+
+### Debiasing at Embedding Level
+#### The Word Embeddings Association Test (WEAT)
+#### Neighborhood Metric
+- discuss that this is shady in the discussion part
+
+## Analysis of Retaining Word Semantics
+#### Word Analogy
+#### Concept Categorization
+
+
+## Discussion
+- analysis of results and evaluation of performance evaluation
+- ablation studies (not applicable)
+- discuss the results and what could be (partly) replicated and what not
+
+
+## Conclusion
+
+
+
+\newpage
+
+# References
+
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+
+<div id="refs" custom-style="Bibliography"></div>
+\endgroup

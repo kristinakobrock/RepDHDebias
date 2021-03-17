@@ -1,0 +1,299 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  english,
+  man]{apa6}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Does Double-Hard Debias Keep its Promises? - A Replication Study},
+  pdfauthor={Kristina Kobrock1, Meike Korsten1, \& Sonja Börgerding1},
+  pdfkeywords={keywords},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% Make \paragraph and \subparagraph free-standing
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+% Manuscript styling
+\usepackage{upgreek}
+\captionsetup{font=singlespacing,justification=justified}
+
+% Table formatting
+\usepackage{longtable}
+\usepackage{lscape}
+% \usepackage[counterclockwise]{rotating}   % Landscape page setup for large tables
+\usepackage{multirow}		% Table styling
+\usepackage{tabularx}		% Control Column width
+\usepackage[flushleft]{threeparttable}	% Allows for three part tables with a specified notes section
+\usepackage{threeparttablex}            % Lets threeparttable work with longtable
+
+% Create new environments so endfloat can handle them
+% \newenvironment{ltable}
+%   {\begin{landscape}\begin{center}\begin{threeparttable}}
+%   {\end{threeparttable}\end{center}\end{landscape}}
+\newenvironment{lltable}{\begin{landscape}\begin{center}\begin{ThreePartTable}}{\end{ThreePartTable}\end{center}\end{landscape}}
+
+% Enables adjusting longtable caption width to table width
+% Solution found at http://golatex.de/longtable-mit-caption-so-breit-wie-die-tabelle-t15767.html
+\makeatletter
+\newcommand\LastLTentrywidth{1em}
+\newlength\longtablewidth
+\setlength{\longtablewidth}{1in}
+\newcommand{\getlongtablewidth}{\begingroup \ifcsname LT@\roman{LT@tables}\endcsname \global\longtablewidth=0pt \renewcommand{\LT@entry}[2]{\global\advance\longtablewidth by ##2\relax\gdef\LastLTentrywidth{##2}}\@nameuse{LT@\roman{LT@tables}} \fi \endgroup}
+
+% \setlength{\parindent}{0.5in}
+% \setlength{\parskip}{0pt plus 0pt minus 0pt}
+
+% Overwrite redefinition of paragraph and subparagraph by the default LaTeX template
+% See https://github.com/crsh/papaja/issues/292
+\makeatletter
+\renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
+  {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+  {-1em}%
+  {\normalfont\normalsize\bfseries\itshape\typesectitle}}
+
+\renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{1em}%
+  {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+  {-\z@\relax}%
+  {\normalfont\normalsize\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
+\makeatother
+
+% \usepackage{etoolbox}
+\makeatletter
+\patchcmd{\HyOrg@maketitle}
+  {\section{\normalfont\normalsize\abstractname}}
+  {\section*{\normalfont\normalsize\abstractname}}
+  {}{\typeout{Failed to patch abstract.}}
+\patchcmd{\HyOrg@maketitle}
+  {\section{\protect\normalfont{\@title}}}
+  {\section*{\protect\normalfont{\@title}}}
+  {}{\typeout{Failed to patch title.}}
+\makeatother
+\shorttitle{Replication: Wang et al. (2020)}
+\keywords{keywords\newline\indent Word count: X}
+\DeclareDelayedFloatFlavor{ThreePartTable}{table}
+\DeclareDelayedFloatFlavor{lltable}{table}
+\DeclareDelayedFloatFlavor*{longtable}{table}
+\makeatletter
+\renewcommand{\efloat@iwrite}[1]{\immediate\expandafter\protected@write\csname efloat@post#1\endcsname{}}
+\makeatother
+\usepackage{lineno}
+
+\linenumbers
+\usepackage{csquotes}
+\ifxetex
+  % Load polyglossia as late as possible: uses bidi with RTL langages (e.g. Hebrew, Arabic)
+  \usepackage{polyglossia}
+  \setmainlanguage[]{english}
+\else
+  \usepackage[shorthands=off,main=english]{babel}
+\fi
+
+\title{Does Double-Hard Debias Keep its Promises? - A Replication Study}
+\author{Kristina Kobrock\textsuperscript{1}, Meike Korsten\textsuperscript{1}, \& Sonja Börgerding\textsuperscript{1}}
+\date{}
+
+
+\authornote{
+
+The authors made the following contributions. Kristina Kobrock: müssen wir natürlich nicht ausfüllen; Meike Korsten: \ldots{}; Sonja Börgerding: \ldots{}.
+
+}
+
+\affiliation{\vspace{0.5cm}\textsuperscript{1} University of Osnabrück}
+
+\begin{document}
+\maketitle
+
+Just edit the text! There are several websites that help with (r)markdown, e.g.~\url{https://rmarkdown.rstudio.com/}.
+If you don't want to edit directly, but rather comment use:
+Cite using: Wang et al.~(2020) said that\ldots{} or simply blablabla (Wang et al., 2020). References must be added to r-references.bib file.
+
+\hypertarget{introduction}{%
+\subsection{Introduction}\label{introduction}}
+
+\begin{itemize}
+\tightlist
+\item
+  shall we include an abstract?
+\end{itemize}
+
+\hypertarget{bias-in-embeddings}{%
+\subsubsection{Bias in Embeddings}\label{bias-in-embeddings}}
+
+\begin{itemize}
+\tightlist
+\item
+  some text on bias in embeddings and why it's useful to do research in that field
+\item
+  summary of related approaches (or put it in the discussion ?)
+\end{itemize}
+
+\hypertarget{motivation}{%
+\subsubsection{Motivation}\label{motivation}}
+
+\begin{itemize}
+\tightlist
+\item
+  rough description of the specific study (Wang et al.) \& motivation of replication attempt (maybe some general remarks on the need for replication studies)
+\end{itemize}
+
+\hypertarget{implementation}{%
+\subsection{Implementation}\label{implementation}}
+
+\begin{itemize}
+\tightlist
+\item
+  task description
+\item
+  explanation of model and training choices
+\end{itemize}
+
+\hypertarget{datasets-and-preliminaries}{%
+\subsubsection{Datasets and Preliminaries}\label{datasets-and-preliminaries}}
+
+\hypertarget{hard-debias}{%
+\subsubsection{Hard Debias}\label{hard-debias}}
+
+\hypertarget{double-hard-debias}{%
+\subsubsection{Double-Hard Debias}\label{double-hard-debias}}
+
+\hypertarget{evaluation}{%
+\subsection{Evaluation}\label{evaluation}}
+
+\begin{itemize}
+\tightlist
+\item
+  stick to the paper
+\end{itemize}
+
+\hypertarget{baselines}{%
+\subsubsection{Baselines}\label{baselines}}
+
+\hypertarget{evaluation-of-debiasing-performance}{%
+\subsubsection{Evaluation of Debiasing Performance}\label{evaluation-of-debiasing-performance}}
+
+\hypertarget{debiasing-in-downstream-applications}{%
+\subsubsection{Debiasing in Downstream Applications}\label{debiasing-in-downstream-applications}}
+
+\hypertarget{coreference-resolution}{%
+\paragraph{Coreference Resolution}\label{coreference-resolution}}
+
+\begin{itemize}
+\tightlist
+\item
+  no replication possible, no code provided
+\end{itemize}
+
+\hypertarget{debiasing-at-embedding-level}{%
+\subsubsection{Debiasing at Embedding Level}\label{debiasing-at-embedding-level}}
+
+\hypertarget{the-word-embeddings-association-test-weat}{%
+\paragraph{The Word Embeddings Association Test (WEAT)}\label{the-word-embeddings-association-test-weat}}
+
+\hypertarget{neighborhood-metric}{%
+\paragraph{Neighborhood Metric}\label{neighborhood-metric}}
+
+\begin{itemize}
+\tightlist
+\item
+  discuss that this is shady in the discussion part
+\end{itemize}
+
+\hypertarget{analysis-of-retaining-word-semantics}{%
+\subsection{Analysis of Retaining Word Semantics}\label{analysis-of-retaining-word-semantics}}
+
+\hypertarget{word-analogy}{%
+\paragraph{Word Analogy}\label{word-analogy}}
+
+\hypertarget{concept-categorization}{%
+\paragraph{Concept Categorization}\label{concept-categorization}}
+
+\hypertarget{discussion}{%
+\subsection{Discussion}\label{discussion}}
+
+\begin{itemize}
+\tightlist
+\item
+  analysis of results and evaluation of performance evaluation
+\item
+  ablation studies (not applicable)
+\item
+  discuss the results and what could be (partly) replicated and what not
+\end{itemize}
+
+\hypertarget{conclusion}{%
+\subsection{Conclusion}\label{conclusion}}
+
+\newpage
+
+\hypertarget{references}{%
+\section{References}\label{references}}
+
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+
+\hypertarget{refs}{}
+\leavevmode\hypertarget{ref-wang2020doublehard}{}%
+Wang, T., Lin, X. V., Rajani, N. F., McCann, B., Ordonez, V., \& Xiong, C. (2020). Double-hard debias: Tailoring word embeddings for gender bias mitigation. \emph{Association for computational linguistics (acl)}.
+
+\endgroup
+
+
+\end{document}
