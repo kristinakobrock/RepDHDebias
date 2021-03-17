@@ -1,8 +1,5 @@
 import numpy as np
 from sklearn.cluster import AgglomerativeClustering, KMeans
-from web.datasets.similarity import fetch_MEN, fetch_WS353, fetch_SimLex999, fetch_MTurk, fetch_RG65, fetch_RW, fetch_TR9856
-from web.datasets.categorization import fetch_AP, fetch_battig, fetch_BLESS, fetch_ESSLI_1a, fetch_ESSLI_2b, \
-    fetch_ESSLI_2c
 from web.analogy import *
 from six import iteritems
 from web.embedding import Embedding
