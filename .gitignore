@@ -1,0 +1,4 @@
+# ignore generated Rhistory files
+*.Rhistory
+# ignore generated ipynb checkpoints
+.ipynb_checkpoints/
