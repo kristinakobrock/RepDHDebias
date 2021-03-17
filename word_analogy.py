@@ -1,17 +1,13 @@
 import numpy as np
 from sklearn.cluster import AgglomerativeClustering, KMeans
-from web.analogy import *
 from six import iteritems
-from web.embedding import Embedding
-from web.evaluate import calculate_purity, evaluate_categorization, evaluate_on_semeval_2012_2, evaluate_analogy, \
-evaluate_on_WordRep, evaluate_similarity
 
 class analogy_tasks():
 
-    def evaluate_analogy_msr(W, vocab, file_name='EN-MSR.txt'):
+    def evaluate_analogy_msr(W, vocab, file_name='word_relationship.questions'):
         """Evaluate the trained word vectors on a variety of tasks"""
 
-        prefix = '/zf15/tw8cb/summer_2019/code/GloVe/eval/question-data/'
+        #prefix = '/zf15/tw8cb/summer_2019/code/GloVe/eval/question-data/'
 
         # to avoid memory overflow, could be increased/decreased
         # depending on system and vocab size
@@ -25,15 +21,15 @@ class analogy_tasks():
         count_tot = 0 # count all questions
         full_count = 0 # count all questions, including those with unknown words
 
-        with open('%s/%s' % (prefix, file_name), 'r') as f:
+        with open('%s/' % (file_name), 'r') as f:
             full_data = []
             for line in f:
                 tokens = line.rstrip().split(' ')
-                full_data.append([tokens[0], tokens[1], tokens[2], tokens[4]])
+                full_data.append([tokens[0], tokens[1], tokens[2]]) #, tokens[4]])
             full_count += len(full_data)
             data = [x for x in full_data if all(word in vocab for word in x)]
 
-        indices = np.array([[vocab[word] for word in row] for row in data])
+        indices = np.array([[embed(word) for word in row] for row in data])
         ind1, ind2, ind3, ind4 = indices.T
 
         predictions = np.zeros((len(indices),))
@@ -74,7 +70,7 @@ class analogy_tasks():
             'gram5-present-participle.txt', 'gram6-nationality-adjective.txt',
             'gram7-past-tense.txt', 'gram8-plural.txt', 'gram9-plural-verbs.txt',
             ]
-        prefix = '/zf15/tw8cb/summer_2019/code/GloVe/eval/question-data/'
+        prefix = 'ana_files'
 
         # to avoid memory overflow, could be increased/decreased
         # depending on system and vocab size
@@ -91,10 +87,16 @@ class analogy_tasks():
         for i in range(len(filenames)):
             with open('%s/%s' % (prefix, filenames[i]), 'r') as f:
                 full_data = [line.rstrip().split(' ') for line in f]
+                #print("full_data", full_data)
+                print(len(full_data))
                 full_count += len(full_data)
-                data = [x for x in full_data if all(word in vocab for word in x)]
-
-            indices = np.array([[vocab[word] for word in row] for row in data])
+                data = [x for x in full_data if all(word.lower() in vocab for word in x)]
+            
+            print(len(data))
+            #print("data", data)
+            
+            indices = np.array([[w2id[word.lower()] for word in row] for row in data])
+            print(indices.shape)
             ind1, ind2, ind3, ind4 = indices.T
 
             predictions = np.zeros((len(indices),))
