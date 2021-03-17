@@ -3,4 +3,4 @@
 # ignore automatically generated ipynb checkpoints
 .ipynb_checkpoints/
 # ignore automatically generated pycache files
-.__pycache__/
+__pycache__/
