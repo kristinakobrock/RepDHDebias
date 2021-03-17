@@ -1,4 +1,6 @@
-# ignore generated Rhistory files
+# ignore automatically generated Rhistory files
 *.Rhistory
-# ignore generated ipynb checkpoints
+# ignore automatically generated ipynb checkpoints
 .ipynb_checkpoints/
+# ignore automatically generated pycache files
+.__pycache__/
