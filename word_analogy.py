@@ -60,7 +60,7 @@ class analogy_tasks():
             (np.mean(val) * 100, np.sum(val), len(val)))
         
     
-    def evaluate_analogy_google(W, vocab):
+    def evaluate_analogy_google(W, vocab, w2id):
         """Evaluate the trained w vectors on a variety of tasks"""
 
         filenames = [
@@ -88,15 +88,15 @@ class analogy_tasks():
             with open('%s/%s' % (prefix, filenames[i]), 'r') as f:
                 full_data = [line.rstrip().split(' ') for line in f]
                 #print("full_data", full_data)
-                print(len(full_data))
+                #print(len(full_data))
                 full_count += len(full_data)
                 data = [x for x in full_data if all(word.lower() in vocab for word in x)]
             
-            print(len(data))
+            #print(len(data))
             #print("data", data)
             
             indices = np.array([[w2id[word.lower()] for word in row] for row in data])
-            print(indices.shape)
+            #print(indices.shape)
             ind1, ind2, ind3, ind4 = indices.T
 
             predictions = np.zeros((len(indices),))
