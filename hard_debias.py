@@ -1,11 +1,12 @@
 import numpy as np
 from sklearn.decomposition import PCA
 import utils
-from data_embeddings import embed
+
 
 class HardDebias():
+        
     
-    def idtfy_gender_subspace(word_sets, w2id, defining_sets, k=1):
+    def idtfy_gender_subspace(embedding, word_sets, w2id, defining_sets, k=1):
         """
         identifies the bias (gender) subspace following Bolukbasi et al. 2016
 
@@ -22,12 +23,15 @@ class HardDebias():
                         (denoted as B in Bolukbasi et al. 2016)
         """
 
+        def embed(word, w2id=w2id, embedding=embedding):
+            return embedding[w2id[word]]
+        
         # following Bolukbasi et al. (2016)
         C = []
         for female_word, male_word in defining_sets:
-            mean = (utils.embed(female_word) + utils.embed(male_word)) /2
-            C.append(utils.embed(female_word) - mean)
-            C.append(utils.embed(male_word) - mean)
+            mean = (embed(female_word) + embed(male_word)) /2
+            C.append(embed(female_word) - mean)
+            C.append(embed(male_word) - mean)
         C = np.array(C)
 
         # applying PCA is the same as SVD when interpreting C as covariance matrix (Vargas & Cotterell 2020)
@@ -43,7 +47,7 @@ class HardDebias():
         return B
     
     
-    def hard_debias (word_emb, equality_sets, B):
+    def hard_debias (embedding, w2id, word_emb, equality_sets, B):
         """performs hard debias on a word embedding to neutralize it,
 
         takes 
@@ -54,6 +58,9 @@ class HardDebias():
         returns
         new_word_emb: the new embedding for word_emb
         """
+        
+        def embed(word, w2id=w2id, embedding=embedding):
+            return embedding[w2id[word]]
 
         # if word_emb is a single embedding:
             # w_orth(word_emb)
@@ -62,15 +69,15 @@ class HardDebias():
 
         new_word_emb = np.zeros((word_emb.shape))
         for i, embedding in enumerate(word_emb):
-            new_word_emb[i] = w_orth(embedding, B)
+            new_word_emb[i] = utils.w_orth(embedding, B)
 
         for equal_set in equality_sets:
             if equal_set[0] in w2id and equal_set[1] in w2id:
                 mean = (embed(equal_set[0]) + embed(equal_set[1])) / 2
-                mean_biased = mean - w_orth(mean, B)
+                mean_biased = mean - utils.w_orth(mean, B)
                 v = mean - mean_biased 
                 for word in equal_set:
-                    word_biased = embed(word) - w_orth(embed(word), B)
+                    word_biased = embed(word) - utils.w_orth(embed(word), B)
                     # new_embed = v + np.sqrt(1 - (np.linalg.norm(v)) ** 2) * ((word_biased - mean_biased) / unit_vec(word_biased - mean_biased))
                     new_embed = v * ((word_biased - mean_biased) / unit_vec(word_biased - mean_biased))
 

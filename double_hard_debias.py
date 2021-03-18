@@ -2,7 +2,6 @@ import numpy as np
 from sklearn import metrics as sk_m
 from sklearn.decomposition import PCA
 import utils
-import data_embeddings as data
 from hard_debias import HardDebias as hd
 
 
@@ -71,7 +70,7 @@ class DoubleHardDebias():
         return alignment 
     
     
-    def double_hard_debias(embedding, embedding_neutral, id_neutral, index_m, index_f, gender_subspace, equality_sets):
+    def double_hard_debias(embedding, w2id, embedding_neutral, id_neutral,  equality_sets, index_m, index_f, gender_subspace):
         """
         Double Hard Debias as proposed by Wang et al. (2020):
 
@@ -155,7 +154,7 @@ class DoubleHardDebias():
         first_neutral_debias = np.asarray(first_neutral_debias)
 
         # apply HardDebias to all neutral, once debiased, words
-        double_neutral_debias = hd.hard_debias(first_neutral_debias, equality_sets, gender_subspace)
+        double_neutral_debias = hd.hard_debias(embedding, w2id, first_neutral_debias, equality_sets, gender_subspace)
 
         double_debias = first_debias.copy()
 
