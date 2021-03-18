@@ -4,10 +4,13 @@ from six import iteritems
 
 class analogy_tasks():
 
-    def evaluate_analogy_msr(W, vocab, file_name='word_relationship.questions'):
+    def evaluate_analogy_msr(W, vocab, w2id):
         """Evaluate the trained word vectors on a variety of tasks"""
 
-        #prefix = '/zf15/tw8cb/summer_2019/code/GloVe/eval/question-data/'
+        prefix = 'ana_files'
+
+        file_questions = 'word_relationship.questions'
+        file_answers = 'word_relationship.answers'
 
         # to avoid memory overflow, could be increased/decreased
         # depending on system and vocab size
@@ -21,15 +24,18 @@ class analogy_tasks():
         count_tot = 0 # count all questions
         full_count = 0 # count all questions, including those with unknown words
 
-        with open('%s/' % (file_name), 'r') as f:
+        # this part needed to be adjusted because the files openly available on the Microsoft website
+        # did not match the format of the files used in the paper
+        with open('%s/%s' % (prefix, file_questions), 'r') as file_q, open('%s/%s' % (prefix, file_answers), 'r') as file_a:
             full_data = []
-            for line in f:
-                tokens = line.rstrip().split(' ')
-                full_data.append([tokens[0], tokens[1], tokens[2]]) #, tokens[4]])
+            for line_q, line_a in zip(file_q, file_a):
+                tokens_q = line_q.rstrip().split(' ')
+                tokens_a = line_a.rstrip().split(' ')
+                full_data.append([tokens_q[0], tokens_q[1], tokens_q[2], tokens_a[1]])
             full_count += len(full_data)
             data = [x for x in full_data if all(word in vocab for word in x)]
 
-        indices = np.array([[embed(word) for word in row] for row in data])
+        indices = np.array([[w2id[word] for word in row] for row in data])
         ind1, ind2, ind3, ind4 = indices.T
 
         predictions = np.zeros((len(indices),))
@@ -54,7 +60,6 @@ class analogy_tasks():
         count_tot = count_tot + len(ind1)
         correct_tot = correct_tot + sum(val)
 
-        #print("%s:" % filenames[i])
         print(len(val))
         print('ACCURACY TOP1-MSR: %.2f%% (%d/%d)' %
             (np.mean(val) * 100, np.sum(val), len(val)))
@@ -63,6 +68,8 @@ class analogy_tasks():
     def evaluate_analogy_google(W, vocab, w2id):
         """Evaluate the trained w vectors on a variety of tasks"""
 
+        # the files were adjusted as the only file openly available linked in the original paper 
+        # was a single file instead of several
         filenames = [
             'capital-common-countries.txt', 'capital-world.txt', 'currency.txt',
             'city-in-state.txt', 'family.txt', 'gram1-adjective-to-adverb.txt',
@@ -87,16 +94,10 @@ class analogy_tasks():
         for i in range(len(filenames)):
             with open('%s/%s' % (prefix, filenames[i]), 'r') as f:
                 full_data = [line.rstrip().split(' ') for line in f]
-                #print("full_data", full_data)
-                #print(len(full_data))
                 full_count += len(full_data)
                 data = [x for x in full_data if all(word.lower() in vocab for word in x)]
             
-            #print(len(data))
-            #print("data", data)
-            
             indices = np.array([[w2id[word.lower()] for word in row] for row in data])
-            #print(indices.shape)
             ind1, ind2, ind3, ind4 = indices.T
 
             predictions = np.zeros((len(indices),))
@@ -106,6 +107,7 @@ class analogy_tasks():
 
                 pred_vec = (W[ind2[subset], :] - W[ind1[subset], :]
                     +  W[ind3[subset], :])
+                
                 #cosine similarity if input W has been normalized
                 dist = np.dot(W, pred_vec.T)
 
