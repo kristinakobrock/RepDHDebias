@@ -45,6 +45,7 @@ class analogy_tasks():
 
             pred_vec = (W[ind2[subset], :] - W[ind1[subset], :]
                 +  W[ind3[subset], :])
+            
             #cosine similarity if input W has been normalized
             dist = np.dot(W, pred_vec.T)
 
