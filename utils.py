@@ -71,10 +71,12 @@ class utils():
         """Checks if a string contains any digits"""
         return any(char.isdigit() for char in word)
 
+    
     def hasSpecialChar(word):
         """Checks if a string contains special characters(except "_")"""
         special_characters = "!@#$%^&*()-+?=,<>/."
         return any(char in special_characters for char in word)
+    
     
     def debias_gn(wv):
         for v in wv:
