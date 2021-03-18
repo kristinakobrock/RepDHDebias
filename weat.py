@@ -1,4 +1,4 @@
-import sklearn
+from sklearn import metrics as sk_m
 import random as random
 from scipy.stats import norm
 import statistics as stat
@@ -201,5 +201,5 @@ class weat(object):
     def cosineSimilarity(self,a, b):
         a = [a]
         b = [b]
-        r = sklearn.metrics.pairwise.cosine_similarity(a,b)
+        r = sk_m.pairwise.cosine_similarity(a,b)
         return r[0][0]
