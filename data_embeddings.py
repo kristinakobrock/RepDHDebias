@@ -55,7 +55,7 @@ for word in gender_specific_original:
     gender_specific.append(word.lower())
     
 # URL to the file storing definitional pairs as listed by the authors
-definitial_pairs_url = "https://raw.githubusercontent.com/uvavision/Double-Hard-Debias/master/data/definitional_pairs.json"
+definitional_pairs_url = "https://raw.githubusercontent.com/uvavision/Double-Hard-Debias/master/data/definitional_pairs.json"
 
 # Empty list to store definitional pairs plus additional list after lowercasing
 definitional_pairs_original = []
