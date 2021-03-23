@@ -206,6 +206,7 @@ def compute_NM(female_biased, male_biased):
     for key, fem_embs in female_biased.items():
         male_embs = male_biased[key]
         accuracies[key] = dhd.align_acc(np.asarray(male_embs), np.asarray(fem_embs), k=2)
+        print(key + ': %.2f%%' % (accuracies[key] * 100))
     
     return accuracies
 

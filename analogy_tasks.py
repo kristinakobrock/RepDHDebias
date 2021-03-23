@@ -62,6 +62,8 @@ def evaluate_analogy_msr(W, vocab, w2id):
     print(len(val))
     print('ACCURACY TOP1-MSR: %.2f%% (%d/%d)' %
         (np.mean(val) * 100, np.sum(val), len(val)))
+    
+    return np.mean(val)
         
     
 def evaluate_analogy_google(W, vocab, w2id):
@@ -138,6 +140,8 @@ def evaluate_analogy_google(W, vocab, w2id):
     print('Syntactic accuracy: %.2f%%  (%i/%i)' %
         (100 * correct_syn / float(count_syn), correct_syn, count_syn))
     print('Total accuracy: %.2f%%  (%i/%i)' % (100 * correct_tot / float(count_tot), correct_tot, count_tot))
+    
+    return (correct_sem / float(count_sem)), (correct_syn / float(count_syn)), (correct_tot / float(count_tot))
         
         
 print("successfully loaded analogy_tasks")
