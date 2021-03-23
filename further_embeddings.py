@@ -33,4 +33,13 @@ embedding_gp_gn_url = "http://www.cs.virginia.edu/~tw8cb/word_embeddings/gp_gn_g
 vocab_gp_gn_original, w2id_gp_gn_original, embedding_gp_gn_original = utils.read_embedding(embedding_gp_gn_url, skip_first = True)
 vocab_gp_gn, w2id_gp_gn, embedding_gp_gn = utils.restrict_vocab(vocab_gp_gn_original, w2id_gp_gn_original, embedding_gp_gn_original)
 
+# load definitional pairs in order to be able to identify gender subspace
+definitional_pairs_url = "https://raw.githubusercontent.com/uvavision/Double-Hard-Debias/master/data/definitional_pairs.json"
+definitional_pairs_original = []
+definitional_pairs = []
+with urllib.request.urlopen(definitional_pairs_url) as f:
+    definitional_pairs_original.extend(json.load(f))
+for [w1, w2] in definitional_pairs_original:
+    definitional_pairs.append([w1.lower(), w2.lower()])
+
 print("successfully loaded further_embeddings")

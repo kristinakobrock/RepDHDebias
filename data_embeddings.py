@@ -63,7 +63,7 @@ definitional_pairs = []
 
 
 # Read out url and add pairs in list
-with urllib.request.urlopen(definitial_pairs_url) as f:
+with urllib.request.urlopen(definitional_pairs_url) as f:
     definitional_pairs_original.extend(json.load(f))
     
 # Add lower case pairs to second list

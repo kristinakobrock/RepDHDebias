@@ -140,34 +140,4 @@ def evaluate_analogy_google(W, vocab, w2id):
     print('Total accuracy: %.2f%%  (%i/%i)' % (100 * correct_tot / float(count_tot), correct_tot, count_tot))
         
         
-def evaluate_analogy_semeval2012(w_dict):
-    score = evaluate_on_semeval_2012_2(w_dict)['all']
-    print("Analogy prediction accuracy on {} {}".format("SemEval2012", score))
-
-        
-def evaluate_ana(wv, w2i, vocab):
-    W_norm = np.zeros(wv.shape)
-    d = (np.sum(wv ** 2, 1) ** (0.5))
-    W_norm = (wv.T / d).T
-
-    evaluate_analogy_msr(W_norm, w2i)
-    evaluate_analogy_google(W_norm, w2i)
-
-    wv_dict = dict()
-    for w in vocab:
-        wv_dict[w] = W_norm[w2i[w], :]
-
-    if isinstance(wv_dict, dict):
-        w = Embedding.from_dict(wv_dict)
-    evaluate_analogy_semeval2012(w)
-
-#     analogy_tasks = {
-#         "Google": fetch_google_analogy(),
-#         "MSR": fetch_msr_analogy()
-#     }
-
-#     analogy_results = {}
-
-#     for name, data in iteritems(analogy_tasks):
-#         analogy_results[name] = evaluate_analogy(w, data.X, data.y)
-#         print("Analogy prediction accuracy on {} {}".format(name, analogy_results[name]))
+print("successfully loaded analogy_tasks")

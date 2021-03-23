@@ -1,5 +1,6 @@
 import urllib.request
 import numpy as np
+import double_hard_debias as dhd
 
 
 def read_embedding(url, skip_first = False):
@@ -137,6 +138,76 @@ def w_orth (word_emb, direction):
     new_word = word_emb - ((word_emb.dot(direction)) * direction)
     
     return unit_vec(new_word)
+
+
+def get_most_biased(embedding, vocab, gender_subspace, k=500):
+    """
+    retrieves the top k most biased female and male words
+    
+    takes
+    embedding: the word embedding
+    gender_subspace: the gender subspace/direction identified by Hard Debias
+    k: gives the number of how many top biased words should be retrieved
+    
+    returns
+    f_biased: the top k most biased female words
+    m_biased: the top k most biased male words
+    """
+    
+    index_f, index_m = dhd.most_biased(embedding, gender_subspace, k)
+    f_biased = [vocab[i] for i in index_f]
+    m_biased = [vocab[i] for i in index_m]
+    
+    return f_biased, m_biased
+
+
+def get_embeddings(dict_embeddings, f_biased, m_biased):
+    """
+    retrieves the corresponding embedding vectors for the top k most biased words
+    
+    takes
+    dict_embeddings: dictionary with all embeddings, their corresponding vocabs and w2id dictionaries
+    f_biased: the top k most biased female words
+    m_biased: the top k most biased male words
+    
+    returns
+    female_biased: a dictionary with the embeddings for the top k most biased female words for each embedding
+    male_biased: a dictionary with the embeddings for the top k most biased male words for each embedding
+    """
+    
+    female_biased = {}
+    male_biased = {}
+    for key, (embedding, vocab, w2id) in dict_embeddings.items():
+        f_embeddings = []
+        m_embeddings = []
+        for word in f_biased:
+            f_embeddings.append(embedding[w2id[word]])
+        for word in m_biased:
+            m_embeddings.append(embedding[w2id[word]])
+        female_biased[key] = f_embeddings
+        male_biased[key] = m_embeddings
+        
+    return female_biased, male_biased
+
+
+def compute_NM(female_biased, male_biased):
+    """
+    computes the Neighborhood Metric for all female and male biased embeddings
+    
+    takes
+    female_biased: a dictionary that contains the word embeddings for female biased words for all embeddings
+    male_biased: a dictionary that contains the word embeddings for female biased words for all embeddings
+    
+    returns
+    accuracies: a dictionary that contains the Neighborhood Metric scores for each embedding
+    """
+    
+    accuracies = {}
+    for key, fem_embs in female_biased.items():
+        male_embs = male_biased[key]
+        accuracies[key] = dhd.align_acc(np.asarray(male_embs), np.asarray(fem_embs), k=2)
+    
+    return accuracies
 
 
 def debias_gn(wv):

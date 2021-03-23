@@ -1,10 +1,9 @@
 import numpy as np
-from sklearn import metrics as sk_m
 from sklearn.decomposition import PCA
+from sklearn import metrics as sk_m
 from sklearn.cluster import KMeans
 import utils
 import hard_debias as hd
-
 
 
 def most_biased(embedding, B, k=500):
@@ -28,8 +27,8 @@ def most_biased(embedding, B, k=500):
         all_biased[mb_index] = 0
 
     return most_biased_f, most_biased_m
-    
-    
+
+
 #Gender alignment accuracy/ Neighborhood Metric:
 def align_acc(males, females, k=2):
     """bias measurement using KMeans Clustering
@@ -68,8 +67,8 @@ def align_acc(males, females, k=2):
     alignment = np.maximum(alignment, 1-alignment)
 
     return alignment 
-    
-    
+
+
 def double_hard_debias(embedding, w2id, embedding_neutral, id_neutral,  equality_sets, index_m, index_f, gender_subspace):
     """
     Double Hard Debias as proposed by Wang et al. (2020):

@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.decomposition import PCA
 import utils
         
-    
+
 def idtfy_gender_subspace(embedding, word_sets, w2id, defining_sets, k=1):
     """
     identifies the bias (gender) subspace following Bolukbasi et al. 2016
@@ -42,7 +42,7 @@ def idtfy_gender_subspace(embedding, word_sets, w2id, defining_sets, k=1):
     B = np.array(B).flatten()
 
     return B
-    
+
     
 def hard_debias (embedding, w2id, word_emb, equality_sets, B):
     """performs hard debias on a word embedding to neutralize it,
