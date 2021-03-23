@@ -27,6 +27,78 @@ booktitle = {Association for Computational Linguistics (ACL)},
 month = {July},
 year = {2020}
 }
+@article{bolukbasi_2016,
+  author    = {Tolga Bolukbasi and
+               Kai{-}Wei Chang and
+               James Y. Zou and
+               Venkatesh Saligrama and
+               Adam Kalai},
+  title     = {Man is to Computer Programmer as Woman is to Homemaker? Debiasing
+               Word Embeddings},
+  journal   = {CoRR},
+  volume    = {abs/1607.06520},
+  year      = {2016},
+  url       = {http://arxiv.org/abs/1607.06520},
+  archivePrefix = {arXiv},
+  eprint    = {1607.06520},
+  timestamp = {Mon, 13 Aug 2018 16:46:57 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/BolukbasiCZSK16a.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+@article {caliskan_2017,
+	author = {Caliskan, Aylin and Bryson, Joanna J. and Narayanan, Arvind},
+	title = {Semantics derived automatically from language corpora contain human-like biases},
+	volume = {356},
+	number = {6334},
+	pages = {183--186},
+	year = {2017},
+	doi = {10.1126/science.aal4230},
+	publisher = {American Association for the Advancement of Science},
+	abstract = {AlphaGo has demonstrated that a machine can learn how to do things that people spend many years of concentrated study learning, and it can rapidly learn how to do them better than any human can. Caliskan et al. now show that machines can learn word associations from written texts and that these associations mirror those learned by humans, as measured by the Implicit Association Test (IAT) (see the Perspective by Greenwald). Why does this matter? Because the IAT has predictive value in uncovering the association between concepts, such as pleasantness and flowers or unpleasantness and insects. It can also tease out attitudes and beliefs{\textemdash}for example, associations between female names and family or male names and career. Such biases may not be expressed explicitly, yet they can prove influential in behavior.Science, this issue p. 183; see also p. 133Machine learning is a means to derive artificial intelligence by discovering patterns in existing data. Here, we show that applying machine learning to ordinary human language results in human-like semantic biases. We replicated a spectrum of known biases, as measured by the Implicit Association Test, using a widely used, purely statistical machine-learning model trained on a standard corpus of text from the World Wide Web. Our results indicate that text corpora contain recoverable and accurate imprints of our historic biases, whether morally neutral as toward insects or flowers, problematic as toward race or gender, or even simply veridical, reflecting the status quo distribution of gender with respect to careers or first names. Our methods hold promise for identifying and addressing sources of bias in culture, including technology.},
+	issn = {0036-8075},
+	URL = {https://science.sciencemag.org/content/356/6334/183},
+	eprint = {https://science.sciencemag.org/content/356/6334/183.full.pdf},
+	journal = {Science}
+}
+@inproceedings{zhao_2018a,
+author = {Zhao, Jieyu and Wang, Tianlu and Yatskar, Mark and Ordonez, Vicente and Chang, Kai-Wei},
+year = {2018},
+month = {01},
+pages = {15-20},
+title = {Gender Bias in Coreference Resolution: Evaluation and Debiasing Methods},
+doi = {10.18653/v1/N18-2003}
+}
+@inproceedings{zhao_2018b,
+    title = "Learning Gender-Neutral Word Embeddings",
+    author = "Zhao, Jieyu  and
+      Zhou, Yichao  and
+      Li, Zeyu  and
+      Wang, Wei  and
+      Chang, Kai-Wei",
+    booktitle = "Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing",
+    month = oct # "-" # nov,
+    year = "2018",
+    address = "Brussels, Belgium",
+    publisher = "Association for Computational Linguistics",
+    url = "https://www.aclweb.org/anthology/D18-1521",
+    doi = "10.18653/v1/D18-1521",
+    pages = "4847--4853",
+    abstract = "Word embedding models have become a fundamental component in a wide range of Natural Language Processing (NLP) applications. However, embeddings trained on human-generated corpora have been demonstrated to inherit strong gender stereotypes that reflect social constructs. To address this concern, in this paper, we propose a novel training procedure for learning gender-neutral word embeddings. Our approach aims to preserve gender information in certain dimensions of word vectors while compelling other dimensions to be free of gender influence. Based on the proposed method, we generate a Gender-Neutral variant of GloVe (GN-GloVe). Quantitative and qualitative experiments demonstrate that GN-GloVe successfully isolates gender information without sacrificing the functionality of the embedding model.",
+}
+@inproceedings{kaneko-bollegala-2019-gender,
+    title = "Gender-preserving Debiasing for Pre-trained Word Embeddings",
+    author = "Kaneko, Masahiro  and
+      Bollegala, Danushka",
+    booktitle = "Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics",
+    month = jul,
+    year = "2019",
+    address = "Florence, Italy",
+    publisher = "Association for Computational Linguistics",
+    url = "https://www.aclweb.org/anthology/P19-1160",
+    doi = "10.18653/v1/P19-1160",
+    pages = "1641--1650",
+    abstract = "Word embeddings learnt from massive text collections have demonstrated significant levels of discriminative biases such as gender, racial or ethnic biases, which in turn bias the down-stream NLP applications that use those word embeddings. Taking gender-bias as a working example, we propose a debiasing method that preserves non-discriminative gender-related information, while removing stereotypical discriminative gender biases from pre-trained word embeddings. Specifically, we consider four types of information: \textit{feminine}, \textit{masculine}, \textit{gender-neutral} and \textit{stereotypical}, which represent the relationship between gender vs. bias, and propose a debiasing method that (a) preserves the gender-related information in feminine and masculine words, (b) preserves the neutrality in gender-neutral words, and (c) removes the biases from stereotypical words. Experimental results on several previously proposed benchmark datasets show that our proposed method can debias pre-trained word embeddings better than existing SoTA methods proposed for debiasing word embeddings while preserving gender-related but non-discriminative information.",
+}
 @inproceedings{mikolov2013MSR,
     title = "Linguistic Regularities in Continuous Space Word Representations",
     author = "Mikolov, Tomas  and
