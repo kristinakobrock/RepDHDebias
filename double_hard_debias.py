@@ -49,7 +49,8 @@ def align_acc(males, females, k=2):
 
     #need: k (=1000) most biased female and male word's embedding (cosine similarity embedding & gender direction),
     # perform KMeans on embeddings with k=2
-    kmeans = KMeans(n_clusters=k).fit(array_m_f)
+    # due to performance constraints only perform KMeans once
+    kmeans = KMeans(n_clusters=k, random_state=0).fit(array_m_f)
     split = males.shape[0]
 
     correct = 0
@@ -63,7 +64,7 @@ def align_acc(males, females, k=2):
             correct += 1
 
     # alignment score = max(a, 1-a)
-    alignment = 1/(2*array_m_f.shape[0]) * correct
+    alignment = (1/(array_m_f.shape[0])) * correct
     alignment = np.maximum(alignment, 1-alignment)
 
     return alignment 
