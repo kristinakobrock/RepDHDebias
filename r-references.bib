@@ -85,7 +85,7 @@ doi = {10.18653/v1/N18-2003}
     pages = "4847--4853",
     abstract = "Word embedding models have become a fundamental component in a wide range of Natural Language Processing (NLP) applications. However, embeddings trained on human-generated corpora have been demonstrated to inherit strong gender stereotypes that reflect social constructs. To address this concern, in this paper, we propose a novel training procedure for learning gender-neutral word embeddings. Our approach aims to preserve gender information in certain dimensions of word vectors while compelling other dimensions to be free of gender influence. Based on the proposed method, we generate a Gender-Neutral variant of GloVe (GN-GloVe). Quantitative and qualitative experiments demonstrate that GN-GloVe successfully isolates gender information without sacrificing the functionality of the embedding model.",
 }
-@inproceedings{kaneko-bollegala-2019-gender,
+@inproceedings{kaneko_2019,
     title = "Gender-preserving Debiasing for Pre-trained Word Embeddings",
     author = "Kaneko, Masahiro  and
       Bollegala, Danushka",
@@ -99,7 +99,129 @@ doi = {10.18653/v1/N18-2003}
     pages = "1641--1650",
     abstract = "Word embeddings learnt from massive text collections have demonstrated significant levels of discriminative biases such as gender, racial or ethnic biases, which in turn bias the down-stream NLP applications that use those word embeddings. Taking gender-bias as a working example, we propose a debiasing method that preserves non-discriminative gender-related information, while removing stereotypical discriminative gender biases from pre-trained word embeddings. Specifically, we consider four types of information: \textit{feminine}, \textit{masculine}, \textit{gender-neutral} and \textit{stereotypical}, which represent the relationship between gender vs. bias, and propose a debiasing method that (a) preserves the gender-related information in feminine and masculine words, (b) preserves the neutrality in gender-neutral words, and (c) removes the biases from stereotypical words. Experimental results on several previously proposed benchmark datasets show that our proposed method can debias pre-trained word embeddings better than existing SoTA methods proposed for debiasing word embeddings while preserving gender-related but non-discriminative information.",
 }
-
+@inproceedings{gong_2018,
+ author = {Gong, Chengyue and He, Di and Tan, Xu and Qin, Tao and Wang, Liwei and Liu, Tie-Yan},
+ booktitle = {Advances in Neural Information Processing Systems},
+ editor = {S. Bengio and H. Wallach and H. Larochelle and K. Grauman and N. Cesa-Bianchi and R. Garnett},
+ pages = {},
+ publisher = {Curran Associates, Inc.},
+ title = {FRAGE: Frequency-Agnostic Word Representation},
+ url = {https://proceedings.neurips.cc/paper/2018/file/e555ebe0ce426f7f9b2bef0706315e0c-Paper.pdf},
+ volume = {31},
+ year = {2018}
+}
+@misc{mu_2018,
+      title={All-but-the-Top: Simple and Effective Postprocessing for Word Representations}, 
+      author={Jiaqi Mu and Suma Bhat and Pramod Viswanath},
+      year={2018},
+      eprint={1702.01417},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+@misc{collberg_2015,
+  abstract = {e  describe  a  study  into  the  extent  to  which  Computer  Systems  researchers  share  their
+code and data and the extent to which such code builds.  Starting with 601 papers from ACM
+conferences and journals, we examine 402 papers whose results were backed by code.  For 32.3%
+of these papers we were able to obtain the code and build it within 30 minutes; for 48.3% of the
+papers we managed to build the code, but it may have required extra effort; for 54.0% of the
+papers either
+we
+managed to build the code or the authors stated the code would build with
+reasonable effort.  We also propose a novel
+sharing specification
+scheme that requires researchers
+to specify the level of sharing that reviewers and readers can assume from a paper},
+  added-at = {2017-09-13T10:24:53.000+0200},
+  author = {Collberg, Christian and Proebsting, Todd and Warren, Alex M.},
+  biburl = {https://puma.ub.uni-stuttgart.de/bibtex/2c487a1a1262bde3205470f7bdc0579a1/diglezakis},
+  howpublished = {studie},
+  interhash = {2d7cb8674f6207a5415b3be74710752b},
+  intrahash = {c487a1a1262bde3205470f7bdc0579a1},
+  keywords = {reproducibility software softwareLizenzMotivation},
+  timestamp = {2017-09-13T10:24:53.000+0200},
+  title = {Repeatability and Benefaction in Computer Systems Research},
+  url = {http://reproducibility.cs.arizona.edu/v2/RepeatabilityTR.pdf},
+  urldate = {21.6.2017},
+  year = 2015
+}
+@inproceedings{fokkens_2013,
+    title = "Offspring from Reproduction Problems: What Replication Failure Teaches Us",
+    author = "Fokkens, Antske  and
+      van Erp, Marieke  and
+      Postma, Marten  and
+      Pedersen, Ted  and
+      Vossen, Piek  and
+      Freire, Nuno",
+    booktitle = "Proceedings of the 51st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = aug,
+    year = "2013",
+    address = "Sofia, Bulgaria",
+    publisher = "Association for Computational Linguistics",
+    url = "https://www.aclweb.org/anthology/P13-1166",
+    pages = "1691--1701",
+}
+@inproceedings{cohen-etal-2018-three,
+    title = "Three Dimensions of Reproducibility in Natural Language Processing",
+    author = "Cohen, K. Bretonnel  and
+      Xia, Jingbo  and
+      Zweigenbaum, Pierre  and
+      Callahan, Tiffany  and
+      Hargraves, Orin  and
+      Goss, Foster  and
+      Ide, Nancy  and
+      N{\'e}v{\'e}ol, Aur{\'e}lie  and
+      Grouin, Cyril  and
+      Hunter, Lawrence E.",
+    booktitle = "Proceedings of the Eleventh International Conference on Language Resources and Evaluation ({LREC} 2018)",
+    month = may,
+    year = "2018",
+    address = "Miyazaki, Japan",
+    publisher = "European Language Resources Association (ELRA)",
+    url = "https://www.aclweb.org/anthology/L18-1025",
+}
+@inproceedings{mieskes_2017,
+    title = "A Quantitative Study of Data in the {NLP} community",
+    author = "Mieskes, Margot",
+    booktitle = "Proceedings of the First {ACL} Workshop on Ethics in Natural Language Processing",
+    month = apr,
+    year = "2017",
+    address = "Valencia, Spain",
+    publisher = "Association for Computational Linguistics",
+    url = "https://www.aclweb.org/anthology/W17-1603",
+    doi = "10.18653/v1/W17-1603",
+    pages = "23--29",
+    abstract = "We present results on a quantitative analysis of publications in the NLP domain on collecting, publishing and availability of research data. We find that a wide range of publications rely on data crawled from the web, but few give details on how potentially sensitive data was treated. Additionally, we find that while links to repositories of data are given, they often do not work even a short time after publication. We put together several suggestions on how to improve this situation based on publications from the NLP domain, but also other research areas.",
+}
+@inproceedings{mieskes_2019,
+  TITLE = {{NLP Community Perspectives on Replicability.}},
+  AUTHOR = {Mieskes, Margot and Fort, Kar{\"e}n and N{\'e}v{\'e}ol, Aur{\'e}lie and Grouin, Cyril and Cohen, Kevin B},
+  URL = {https://hal.archives-ouvertes.fr/hal-02282794},
+  BOOKTITLE = {{Recent Advances in Natural Language Processing}},
+  ADDRESS = {Varna, Bulgaria},
+  YEAR = {2019},
+  MONTH = Sep,
+  PDF = {https://hal.archives-ouvertes.fr/hal-02282794/file/MieskesRANLP2019.pdf},
+  HAL_ID = {hal-02282794},
+  HAL_VERSION = {v1},
+}
+@misc{belz_2021,
+      title={A Systematic Review of Reproducibility Research in Natural Language Processing}, 
+      author={Anya Belz and Shubham Agarwal and Anastasia Shimorina and Ehud Reiter},
+      year={2021},
+      eprint={2103.07929},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+@article{baker_2015,
+	title={Reproducibility crisis: Blame it on the antibodies},
+	author={Baker, Monya},
+	year={2015}, 
+	journal={Nature},
+	volume={521},
+	number={7552},
+	pages={274--276},
+	doi = {https://doi.org/10.1038/521274a}
+}
 @inproceedings{mikolov2013MSR,
     title = "Linguistic Regularities in Continuous Space Word Representations",
     author = "Mikolov, Tomas  and
