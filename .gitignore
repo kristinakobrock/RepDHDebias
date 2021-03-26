@@ -5,6 +5,5 @@
 # ignore automatically generated pycache files
 __pycache__/
 # ignore non-zipped generated debiased embeddings
-debiased_1/
-debiased_2/
+debiased.p
 glove_dhd.p
