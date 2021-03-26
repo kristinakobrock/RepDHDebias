@@ -80,31 +80,33 @@ This project aims to make a contribution to the increasing body of reproducibili
 - task description
 - explanation of model and training choices
 
-### Datasets and Preliminaries
+### Pilot Study: Impact of Word Frequency (Meike)
 
-### Hard Debias
+### Datasets and Preliminaries (Sonja)
 
-### Double-Hard Debias
+### Hard Debias (Kristina)
+
+### Double-Hard Debias (Meike)
 
 
 ## Evaluation 
 - stick to the paper
 
-### Baselines
+### Baselines (Sonja)
 
-### Evaluation of Debiasing Performance
+### Evaluation of Debiasing Performance 
 ### Debiasing in Downstream Applications
-#### Coreference Resolution
+#### Coreference Resolution (Meike)
 - no replication possible, no code provided
 
 ### Debiasing at Embedding Level
-#### The Word Embeddings Association Test (WEAT)
-#### Neighborhood Metric
+#### The Word Embeddings Association Test (WEAT) (Sonja)
+#### Neighborhood Metric (Meike)
 - discuss that this is shady in the discussion part
 
-## Analysis of Retaining Word Semantics
-#### Word Analogy
-#### Concept Categorization
+### Analysis of Retaining Word Semantics (Kristina)
+#### Word Analogy (Kristina)
+#### Concept Categorization (Sonja)
 
 
 ## Discussion
