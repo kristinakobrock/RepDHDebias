@@ -5,21 +5,12 @@ shorttitle        : "Replication: Wang et al. (2020)"
 author: 
   - name          : "Kristina Kobrock"
     affiliation   : "1"
-    corresponding : yes    # Define only one corresponding author
-    email         : "kkobrock@uni-osnabrueck.de"
-    role:         # Contributorship roles (e.g., CRediT, https://casrai.org/credit/)
-      - müssen wir natürlich nicht ausfüllen
      
-      
   - name          : "Meike Korsten"
     affiliation   : "1"
-    role:
-      - ...
       
   - name          : "Sonja Börgerding"
     affiliation   : "1"
-    role:
-      - ...
 
 affiliation:
   - id            : "1"
@@ -32,10 +23,11 @@ wordcount         : "X"
 bibliography      : ["r-references.bib"]
 
 floatsintext      : no
+figsintext        : yes
 figurelist        : no
 tablelist         : no
 footnotelist      : no
-linenumbers       : yes
+linenumbers       : no
 mask              : no
 draft             : no
 
@@ -85,12 +77,30 @@ This project aims to make a contribution to the increasing body of reproducibili
 ### Datasets and Preliminaries (Sonja)
 
 ### Hard Debias (Kristina)
+The authors make use of the Hard Debias algorithm proposed by Bolukbasi et al. [-@bolukbasi_2016]. The  paper at hand does not give much information on the exact implementation of Hard Debias used. The code uploaded to the authors' Github repository is not well documented, so we were not able to find the exact parts of the algorithm that should refer to the implementation of Hard Debias. That is why we sticked to the original paper from Bolukbasi et al. [-@bolukbasi_2016] in order to re-implement Hard Debias. 
+
+The paper describes two steps: First, the gender direction (or, more generally, the subspace) has to be identified. This is achieved with the help of defining sets $D_1, D_2, ..., D_n \subset W$ which consist of *gender specific* words, i.e. words which are associated with a gender by definition like *girl, boy* or *she, he*. These are the words that can help to identify the gender direction by capturing the concept *female, male* in the embedding $\{\vec{w}\in\mathbb{R}^d\}_{w\in W}$. Whereas in some simple implementations of Hard Debias, only one definitional pair might be used, [@bolukbasi_2016] suggest to compute the gender direction $B$ across multiple pairs to more robustly estimate the bias. In our implementation we used the 10 word pairs suggested by @bolukbasi_2016 which were experimentally shown to agree with an intuitive concept of gender. For these 10 pairs the principal components (PCs) are calculated and the bias subspace $B$ is made of the first $k \geq 1$ rows of the decomposition SVD($C$). According to @bolukbasi_2016, the first eigenvalue is significantly larger than the rest and so the top PC is hypothesized to capture the gender subspace. So $k=1$ is chosen and our resulting gender subspace $B$ is thus simply a direction. C is calculated in the following way: $$C:=\sum_{i=1}^n \sum_{w\in D_i}(\vec{w}-\mu_i)^T(\vec{w}-\mu_i)/|D_i|$$ where $\mu_i := \sum_{w\in D_i}\vec{w}/|D_i|$ are the means of the defining sets $D_1, D_2, ..., D_n \subset W$.
+
+As a second step Hard Debias neutralizes and equalizes the word embeddings. Neutralizing means to transform each word embedding $\vec{w}$ such that every word $w\in N$ has zero projection in the gender subspace. So for each word $w\in N$ in a set of neutral words $N \subseteq W$, we re-embed $\vec{w}$: $$\vec{w}:=(\vec{w}-\vec{w}_B)/||\vec{w}-\vec{w}_B||$$. The equalize step ensures that desired analogical properties hold for both female and male words contained in the equality sets $\mathcal{E}=\{E_1,E_2,...,E_m\}$ where each $E_i \subseteq W$. For example, after debiasing we would like the embeddings of the pair $E=\{grandmother, grandfather\}$ contained in the equality sets to be equidistant from the embedding of *babysit* [@bolukbasi_2016]. This is enforced by equating each set of words $E\in \mathcal{E}$ outside of $B$ to their simple average $\nu:=\mu-\mu_B$ where $\mu:=\sum_{w\in E}w/|E|$ before adjusting vectors so that they are unit length. So for each word $w\in E$, $\vec{w}$ is re-embedded to $$\vec{w}:=\nu+\sqrt{1-||\nu||^2}\frac{\vec{w}_B-\mu_B}{||\vec{w}_B-\mu_B||}$$.
+
+With the help of the original paper, we were successfully able to re-implement Hard Debias.
+
 
 ### Double-Hard Debias (Meike)
 
 
 ## Evaluation 
 - stick to the paper
+
+```{r}
+# load dataframes (computed in Evaluations.ipynb)
+weat_results <- read.csv('evaluation_results/results_weat.csv')
+nm_results <- read.csv('evaluation_results/results_nm.csv')
+tsne_results <- read.csv('evaluation_results/results_tsne.csv')
+msr_results <- read.csv('evaluation_results/results_msr.csv')
+gg_results <- read.csv('evaluation_results/results_gg.csv')
+```
+
 
 ### Baselines (Sonja)
 
@@ -101,11 +111,41 @@ This project aims to make a contribution to the increasing body of reproducibili
 
 ### Debiasing at Embedding Level
 #### The Word Embeddings Association Test (WEAT) (Sonja)
+
+```{r}
+knitr::kable(weat_results, caption="WEAT Test")
+```
+
+
 #### Neighborhood Metric (Meike)
 - discuss that this is shady in the discussion part
 
+```{r}
+knitr::kable(nm_results, caption="Neighborhood Metric Clustering Accuracy")
+```
+
+```{r}
+knitr::include_graphics("evaluation_results/results_tsne.png")
+```
+
+
 ### Analysis of Retaining Word Semantics (Kristina)
+One of the most important properties of embeddings is that they represent meaningful word semantics. In this section it is tested whether the debiased embeddings still have this property.
+
 #### Word Analogy (Kristina)
+The word analogy task was introduced by Mikolov et al. [-@mikolov2013MSR]. The task is to find the word D such that "A is to B as C is to D". One example for an unbiased analogy is: "Man is to King as Woman is to Queen" whereas a biased analogy would be: "Man is to Computer Programmer as Woman is to Homemaker" [@bolukbasi_2016]. The debiased embeddings are evaluated on two word analogy test sets: the MSR [@mikolov2013MSR] and the Google word analogy task [@mikolov2013Google] in order to find out whether they preserve desired unbiased analogies.
+
+The MSR word analogy dataset contains 8000 syntactic questions in the form presented above. The missing word D is computed by maximizing the cosine similarity between D and C - A + B. The evaluation metric is the percentage of correctly answered questions [see @wang_2020].
+
+The Google word analogy dataset contains 19.544 (**Total**) questions, 8.869 of which are semantic (**Sem**) and 10.675 are syntactic (**Syn**) questions.
+
+```{r}
+#ana_results <- full_join(msr_results, gg_results)
+#knitr::kable(ana_results, caption="Analogy Tasks")
+knitr::kable(msr_results, caption="MSR Word Analogy Task")
+knitr::kable(gg_results, caption="Google Word Analogy Task")
+```
+
 #### Concept Categorization (Sonja)
 
 

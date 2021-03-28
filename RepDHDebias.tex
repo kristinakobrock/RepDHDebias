@@ -4,7 +4,7 @@
 %
 \documentclass[
   english,
-  man]{apa6}
+  man,floatsintext]{apa6}
 \usepackage{lmodern}
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
@@ -132,9 +132,6 @@
 \makeatletter
 \renewcommand{\efloat@iwrite}[1]{\immediate\expandafter\protected@write\csname efloat@post#1\endcsname{}}
 \makeatother
-\usepackage{lineno}
-
-\linenumbers
 \usepackage{csquotes}
 \ifxetex
   % Load polyglossia as late as possible: uses bidi with RTL langages (e.g. Hebrew, Arabic)
@@ -148,12 +145,6 @@
 \author{Kristina Kobrock\textsuperscript{1}, Meike Korsten\textsuperscript{1}, \& Sonja Börgerding\textsuperscript{1}}
 \date{}
 
-
-\authornote{
-
-The authors made the following contributions. Kristina Kobrock: müssen wir natürlich nicht ausfüllen; Meike Korsten: \ldots{}; Sonja Börgerding: \ldots{}.
-
-}
 
 \affiliation{\vspace{0.5cm}\textsuperscript{1} University of Osnabrück}
 
@@ -171,7 +162,7 @@ Cite using: Wang et al.~(2020) said that\ldots{} or simply blablabla (Wang et al
 \tightlist
 \item
   shall we include an abstract?
-  Recent research has shown that word embeddings derived from language corpora inherit human biases. The first seminal study on this topic was by Bolukbasi et al.~(2016) who used the word analogy task developed by Mikolov et al.~(2013) to prove that \enquote{Man is to Computer Programmer as Woman is to Homemaker} - a clearly gender biased analogical relation derived from a Google News embedding. Caliskan et al.~(2017) complement this finding with a large study on human-like semantic biases in Natural Language Processing (NLP) tools. They have shown in more general that human biases as exhibited in psychological studies using, for example, the Implicit Association Test (IAT) are learned by NLP algorithms designed to construct meaningful word representations. According to Zhao et al.~(2018a) these biases propagate to downstream tasks. As pre-trained word embeddings are often used for a lot of more complex NLP tasks and architectures of our everyday life, the biased embeddings bear the risk of proliferating and strengthening existing stereotypes in human cultures.
+  Recent research has shown that word embeddings derived from language corpora inherit human biases. The first seminal study on this topic was by Bolukbasi et al.~(2016) who used the word analogy task developed by Mikolov et al.~(2013b) to prove that \enquote{Man is to Computer Programmer as Woman is to Homemaker} - a clearly gender biased analogical relation derived from a Google News embedding. Caliskan et al.~(2017) complement this finding with a large study on human-like semantic biases in Natural Language Processing (NLP) tools. They have shown in more general that human biases as exhibited in psychological studies using, for example, the Implicit Association Test (IAT) are learned by NLP algorithms designed to construct meaningful word representations. According to Zhao et al.~(2018a) these biases propagate to downstream tasks. As pre-trained word embeddings are often used for a lot of more complex NLP tasks and architectures of our everyday life, the biased embeddings bear the risk of proliferating and strengthening existing stereotypes in human cultures.
 \end{itemize}
 
 \hypertarget{debiasing-embeddings}{%
@@ -185,7 +176,7 @@ Wang et al.~(2020) build on Hard Debias in their newly proposed Double Hard Debi
 \subsubsection{Motivation}\label{motivation}}
 
 In this project, we aimed to replicate the debiasing method presented by Wang et al.~(2020) and to reproduce their experimental results as it is the most recent paper that proposes a post-processing technique for debiasing algorithms.
-The reproduction of existing results is not only good practice in science, but it is also essential for gaining a deeper understanding on the methods used and it can help to validate existing results or to shed well-grounded doubt on them. Recent studies of reproducibility in the field of Computer Science (e.g.~Collberg, Proebsting, \& Warren, 2015) and NLP (e.g.~Fokkens et al., 2013; {\textbf{???}}; Belz, Agarwal, Shimorina, \& Reiter, 2021; Mieskes, 2017) explain why reproducibility endeavours are often failing and shed light on the exact nature of the \enquote{reproducibility crisis} (term coined by e.g.~Baker, 2015) in NLP research. Belz et al.~(2021), for example, report that the community's interest in topics of reproducibility have risen even though reproduction attempts still tend to fail due to problems like missing data, missing code and incomplete documentation (see also Fokkens et al., 2013; Mieskes, Fort, Névéol, Grouin, \& Cohen, 2019).
+The reproduction of existing results is not only good practice in science, but it is also essential for gaining a deeper understanding on the methods used and it can help to validate existing results or to shed well-grounded doubt on them. Recent studies of reproducibility in the field of Computer Science (e.g.~Collberg, Proebsting, \& Warren, 2015) and NLP (e.g.~Fokkens et al., 2013; Belz, Agarwal, Shimorina, \& Reiter, 2021; Cohen et al., 2018; Mieskes, 2017) explain why reproducibility endeavours are often failing and shed light on the exact nature of the \enquote{reproducibility crisis} (term coined by e.g.~Baker, 2015) in NLP research. Belz et al.~(2021), for example, report that the community's interest in topics of reproducibility have risen even though reproduction attempts still tend to fail due to problems like missing data, missing code and incomplete documentation (see also Fokkens et al., 2013; Mieskes, Fort, Névéol, Grouin, \& Cohen, 2019).
 This project aims to make a contribution to the increasing body of reproducibility and replication attempts in NLP research.
 
 \hypertarget{implementation}{%
@@ -199,14 +190,25 @@ This project aims to make a contribution to the increasing body of reproducibili
   explanation of model and training choices
 \end{itemize}
 
-\hypertarget{datasets-and-preliminaries}{%
-\subsubsection{Datasets and Preliminaries}\label{datasets-and-preliminaries}}
+\hypertarget{pilot-study-impact-of-word-frequency-meike}{%
+\subsubsection{Pilot Study: Impact of Word Frequency (Meike)}\label{pilot-study-impact-of-word-frequency-meike}}
 
-\hypertarget{hard-debias}{%
-\subsubsection{Hard Debias}\label{hard-debias}}
+\hypertarget{datasets-and-preliminaries-sonja}{%
+\subsubsection{Datasets and Preliminaries (Sonja)}\label{datasets-and-preliminaries-sonja}}
 
-\hypertarget{double-hard-debias}{%
-\subsubsection{Double-Hard Debias}\label{double-hard-debias}}
+\hypertarget{hard-debias-kristina}{%
+\subsubsection{Hard Debias (Kristina)}\label{hard-debias-kristina}}
+
+The authors make use of the Hard Debias algorithm proposed by Bolukbasi et al.~(2016). The paper at hand does not give much information on the exact implementation of Hard Debias used. The code uploaded to the authors' Github repository is not well documented, so we were not able to find the exact parts of the algorithm that should refer to the implementation of Hard Debias. That is why we sticked to the original paper from Bolukbasi et al.~(2016) in order to re-implement Hard Debias.
+
+The paper describes two steps: First, the gender direction (or, more generally, the subspace) has to be identified. This is achieved with the help of defining sets \(D_1, D_2, ..., D_n \subset W\) which consist of \emph{gender specific} words, i.e.~words which are associated with a gender by definition like \emph{girl, boy} or \emph{she, he}. These are the words that can help to identify the gender direction by capturing the concept \emph{female, male} in the embedding \(\{\vec{w}\in\mathbb{R}^d\}_{w\in W}\). Whereas in some simple implementations of Hard Debias, only one definitional pair might be used, (Bolukbasi et al., 2016) suggest to compute the gender direction \(B\) across multiple pairs to more robustly estimate the bias. In our implementation we used the 10 word pairs suggested by Bolukbasi et al. (2016) which were experimentally shown to agree with an intuitive concept of gender. For these 10 pairs the principal components (PCs) are calculated and the bias subspace \(B\) is made of the first \(k \geq 1\) rows of the decomposition SVD(\(C\)). According to Bolukbasi et al. (2016), the first eigenvalue is significantly larger than the rest and so the top PC is hypothesized to capture the gender subspace. So \(k=1\) is chosen and our resulting gender subspace \(B\) is thus simply a direction. C is calculated in the following way: \[C:=\sum_{i=1}^n \sum_{w\in D_i}(\vec{w}-\mu_i)^T(\vec{w}-\mu_i)/|D_i|\] where \(\mu_i := \sum_{w\in D_i}\vec{w}/|D_i|\) are the means of the defining sets \(D_1, D_2, ..., D_n \subset W\).
+
+As a second step Hard Debias neutralizes and equalizes the word embeddings. Neutralizing means to transform each word embedding \(\vec{w}\) such that every word \(w\in N\) has zero projection in the gender subspace. So for each word \(w\in N\) in a set of neutral words \(N \subseteq W\), we re-embed \(\vec{w}\): \[\vec{w}:=(\vec{w}-\vec{w}_B)/||\vec{w}-\vec{w}_B||\]. The equalize step ensures that desired analogical properties hold for both female and male words contained in the equality sets \(\mathcal{E}=\{E_1,E_2,...,E_m\}\) where each \(E_i \subseteq W\). For example, after debiasing we would like the embeddings of the pair \(E=\{grandmother, grandfather\}\) contained in the equality sets to be equidistant from the embedding of \emph{babysit} (Bolukbasi et al., 2016). This is enforced by equating each set of words \(E\in \mathcal{E}\) outside of \(B\) to their simple average \(\nu:=\mu-\mu_B\) where \(\mu:=\sum_{w\in E}w/|E|\) before adjusting vectors so that they are unit length. So for each word \(w\in E\), \(\vec{w}\) is re-embedded to \[\vec{w}:=\nu+\sqrt{1-||\nu||^2}\frac{\vec{w}_B-\mu_B}{||\vec{w}_B-\mu_B||}\].
+
+With the help of the original paper, we were successfully able to re-implement Hard Debias.
+
+\hypertarget{double-hard-debias-meike}{%
+\subsubsection{Double-Hard Debias (Meike)}\label{double-hard-debias-meike}}
 
 \hypertarget{evaluation}{%
 \subsection{Evaluation}\label{evaluation}}
@@ -217,8 +219,8 @@ This project aims to make a contribution to the increasing body of reproducibili
   stick to the paper
 \end{itemize}
 
-\hypertarget{baselines}{%
-\subsubsection{Baselines}\label{baselines}}
+\hypertarget{baselines-sonja}{%
+\subsubsection{Baselines (Sonja)}\label{baselines-sonja}}
 
 \hypertarget{evaluation-of-debiasing-performance}{%
 \subsubsection{Evaluation of Debiasing Performance}\label{evaluation-of-debiasing-performance}}
@@ -226,8 +228,8 @@ This project aims to make a contribution to the increasing body of reproducibili
 \hypertarget{debiasing-in-downstream-applications}{%
 \subsubsection{Debiasing in Downstream Applications}\label{debiasing-in-downstream-applications}}
 
-\hypertarget{coreference-resolution}{%
-\paragraph{Coreference Resolution}\label{coreference-resolution}}
+\hypertarget{coreference-resolution-meike}{%
+\paragraph{Coreference Resolution (Meike)}\label{coreference-resolution-meike}}
 
 \begin{itemize}
 \tightlist
@@ -238,11 +240,40 @@ This project aims to make a contribution to the increasing body of reproducibili
 \hypertarget{debiasing-at-embedding-level}{%
 \subsubsection{Debiasing at Embedding Level}\label{debiasing-at-embedding-level}}
 
-\hypertarget{the-word-embeddings-association-test-weat}{%
-\paragraph{The Word Embeddings Association Test (WEAT)}\label{the-word-embeddings-association-test-weat}}
+\hypertarget{the-word-embeddings-association-test-weat-sonja}{%
+\paragraph{The Word Embeddings Association Test (WEAT) (Sonja)}\label{the-word-embeddings-association-test-weat-sonja}}
 
-\hypertarget{neighborhood-metric}{%
-\paragraph{Neighborhood Metric}\label{neighborhood-metric}}
+\begin{table}
+
+\caption{\label{tab:unnamed-chunk-2}WEAT Test}
+\centering
+\begin{tabular}[t]{l|r|r|r|r|r|r}
+\hline
+X & C...F..d & C...F..p & M...A..d & M...A..p & S...A..d & S...A..p\\
+\hline
+original GloVe & 1.805996 & 0.0001524 & 0.6885951 & 0.0850657 & 1.1298693 & 0.0119380\\
+\hline
+Double-Hard-GloVe (Wang et al.) & 1.531301 & 0.0010940 & -0.5625492 & 0.8692854 & -0.6502705 & 0.9027524\\
+\hline
+Double-Hard-GloVe (replication) & 1.529532 & 0.0011171 & -0.6895229 & 0.9160087 & -0.9418647 & 0.9708258\\
+\hline
+GN-Glove & 1.821105 & 0.0001351 & -0.2563579 & 0.6963340 & 1.0689540 & 0.0162131\\
+\hline
+GN-Glove(a) & 1.755476 & 0.0002232 & 0.5030034 & 0.1584799 & 0.8797335 & 0.0395316\\
+\hline
+GP-GloVe & 1.805885 & 0.0001498 & 1.2085292 & 0.0078522 & 1.1064400 & 0.0131905\\
+\hline
+GP-GN-GloVe & 1.797431 & 0.0001750 & -0.0126418 & 0.5079182 & 0.8460069 & 0.0453070\\
+\hline
+Hard-GloVe & 1.546646 & 0.0010009 & -0.9826043 & 0.9751140 & -0.5383765 & 0.8592254\\
+\hline
+Strong-Hard-GloVe & 1.546646 & 0.0009967 & -0.9856814 & 0.9754177 & -0.5471175 & 0.8625488\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{neighborhood-metric-meike}{%
+\paragraph{Neighborhood Metric (Meike)}\label{neighborhood-metric-meike}}
 
 \begin{itemize}
 \tightlist
@@ -250,14 +281,111 @@ This project aims to make a contribution to the increasing body of reproducibili
   discuss that this is shady in the discussion part
 \end{itemize}
 
-\hypertarget{analysis-of-retaining-word-semantics}{%
-\subsection{Analysis of Retaining Word Semantics}\label{analysis-of-retaining-word-semantics}}
+\begin{table}
 
-\hypertarget{word-analogy}{%
-\paragraph{Word Analogy}\label{word-analogy}}
+\caption{\label{tab:unnamed-chunk-3}Neighborhood Metric Clustering Accuracy}
+\centering
+\begin{tabular}[t]{l|r|r|r}
+\hline
+X & Top.100 & Top.500 & Top.1000\\
+\hline
+original GloVe & 1.000 & 1.000 & 1.0000\\
+\hline
+Double-Hard-GloVe (Wang et al.) & 0.545 & 0.565 & 0.5800\\
+\hline
+Double-Hard-GloVe (replication) & 0.525 & 0.506 & 0.5370\\
+\hline
+GN-Glove & 1.000 & 0.999 & 0.9990\\
+\hline
+GN-Glove(a) & 1.000 & 0.997 & 0.9835\\
+\hline
+GP-GloVe & 1.000 & 1.000 & 1.0000\\
+\hline
+GP-GN-GloVe & 1.000 & 0.998 & 0.9980\\
+\hline
+Hard-GloVe & 0.510 & 0.517 & 0.5030\\
+\hline
+Strong-Hard-GloVe & 0.510 & 0.518 & 0.5025\\
+\hline
+\end{tabular}
+\end{table}
 
-\hypertarget{concept-categorization}{%
-\paragraph{Concept Categorization}\label{concept-categorization}}
+\includegraphics{evaluation_results/results_tsne.png}
+
+\hypertarget{analysis-of-retaining-word-semantics-kristina}{%
+\subsubsection{Analysis of Retaining Word Semantics (Kristina)}\label{analysis-of-retaining-word-semantics-kristina}}
+
+One of the most important properties of embeddings is that they represent meaningful word semantics. In this section it is tested whether the debiased embeddings still have this property.
+
+\hypertarget{word-analogy-kristina}{%
+\paragraph{Word Analogy (Kristina)}\label{word-analogy-kristina}}
+
+The word analogy task was introduced by Mikolov et al.~(2013b). The task is to find the word D such that \enquote{A is to B as C is to D}. One example for an unbiased analogy is: \enquote{Man is to King as Woman is to Queen} whereas a biased analogy would be: \enquote{Man is to Computer Programmer as Woman is to Homemaker} (Bolukbasi et al., 2016). The debiased embeddings are evaluated on two word analogy test sets: the MSR (Mikolov et al., 2013b) and the Google word analogy task (Mikolov et al., 2013a) in order to find out whether they preserve desired unbiased analogies.
+
+The MSR word analogy dataset contains 8000 syntactic questions in the form presented above. The missing word D is computed by maximizing the cosine similarity between D and C - A + B. The evaluation metric is the percentage of correctly answered questions (see Wang et al., 2020).
+
+The Google word analogy dataset contains 19.544 (\textbf{Total}) questions, 8.869 of which are semantic (\textbf{Sem}) and 10.675 are syntactic (\textbf{Syn}) questions.
+
+\begin{table}
+
+\caption{\label{tab:unnamed-chunk-5}MSR Word Analogy Task}
+\centering
+\begin{tabular}[t]{l|r}
+\hline
+X & MSR\\
+\hline
+original GloVe & 0.5440213\\
+\hline
+Double-Hard-GloVe (Wang et al.) & 0.4240000\\
+\hline
+Double-Hard-GloVe (replication) & 0.6212121\\
+\hline
+GN-Glove & 0.5171990\\
+\hline
+GN-Glove(a) & 0.5071663\\
+\hline
+GP-GloVe & 0.5161753\\
+\hline
+GP-GN-GloVe & 0.5198608\\
+\hline
+Hard-GloVe & 0.6257166\\
+\hline
+Strong-Hard-GloVe & 0.6214169\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}
+
+\caption{\label{tab:unnamed-chunk-5}Google Word Analogy Task}
+\centering
+\begin{tabular}[t]{l|r|r|r}
+\hline
+X & Sem & Syn & Total\\
+\hline
+original GloVe & 0.8014096 & 0.5569170 & 0.6389759\\
+\hline
+Double-Hard-GloVe (Wang et al.) & 0.7135838 & 0.4799063 & 0.5667098\\
+\hline
+Double-Hard-GloVe (replication) & 0.8020315 & 0.6655147 & 0.7113338\\
+\hline
+GN-Glove & 0.7597430 & 0.5466541 & 0.6181730\\
+\hline
+GN-Glove(a) & 0.7589138 & 0.5425699 & 0.6151812\\
+\hline
+GP-GloVe & 0.8192371 & 0.5541942 & 0.6431504\\
+\hline
+GP-GN-GloVe & 0.7574627 & 0.5667609 & 0.6307660\\
+\hline
+Hard-GloVe & 0.7999585 & 0.6610116 & 0.7076463\\
+\hline
+Strong-Hard-GloVe & 0.7674129 & 0.6573463 & 0.6942879\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{concept-categorization-sonja}{%
+\paragraph{Concept Categorization (Sonja)}\label{concept-categorization-sonja}}
 
 \hypertarget{discussion}{%
 \subsection{Discussion}\label{discussion}}
@@ -297,6 +425,9 @@ Bolukbasi, T., Chang, K., Zou, J. Y., Saligrama, V., \& Kalai, A. (2016). Man is
 \leavevmode\hypertarget{ref-caliskan_2017}{}%
 Caliskan, A., Bryson, J. J., \& Narayanan, A. (2017). Semantics derived automatically from language corpora contain human-like biases. \emph{Science}, \emph{356}(6334), 183--186. \url{https://doi.org/10.1126/science.aal4230}
 
+\leavevmode\hypertarget{ref-cohen_2018}{}%
+Cohen, K. B., Xia, J., Zweigenbaum, P., Callahan, T., Hargraves, O., Goss, F., \ldots{} Hunter, L. E. (2018). Three dimensions of reproducibility in natural language processing. \emph{Proceedings of the eleventh international conference on language resources and evaluation (LREC 2018)}. Miyazaki, Japan: European Language Resources Association (ELRA). Retrieved from \url{https://www.aclweb.org/anthology/L18-1025}
+
 \leavevmode\hypertarget{ref-collberg_2015}{}%
 Collberg, C., Proebsting, T., \& Warren, A. M. (2015). \emph{Repeatability and benefaction in computer systems research}. studie. Retrieved from \url{http://reproducibility.cs.arizona.edu/v2/RepeatabilityTR.pdf}
 
@@ -315,8 +446,11 @@ Mieskes, M. (2017). A quantitative study of data in the NLP community. \emph{Pro
 \leavevmode\hypertarget{ref-mieskes_2019}{}%
 Mieskes, M., Fort, K., Névéol, A., Grouin, C., \& Cohen, K. B. (2019). NLP Community Perspectives on Replicability. \emph{Recent Advances in Natural Language Processing}. Varna, Bulgaria. Retrieved from \url{https://hal.archives-ouvertes.fr/hal-02282794}
 
+\leavevmode\hypertarget{ref-mikolov2013Google}{}%
+Mikolov, T., Chen, K., Corrado, G., \& Dean, J. (2013a). \emph{Efficient estimation of word representations in vector space}. Retrieved from \url{http://arxiv.org/abs/1301.3781}
+
 \leavevmode\hypertarget{ref-mikolov2013MSR}{}%
-Mikolov, T., Yih, W.-t., \& Zweig, G. (2013). Linguistic regularities in continuous space word representations. \emph{Proceedings of the 2013 conference of the north American chapter of the association for computational linguistics: Human language technologies}, 746--751. Atlanta, Georgia: Association for Computational Linguistics. Retrieved from \url{https://www.aclweb.org/anthology/N13-1090}
+Mikolov, T., Yih, W.-t., \& Zweig, G. (2013b). Linguistic regularities in continuous space word representations. \emph{Proceedings of the 2013 conference of the north American chapter of the association for computational linguistics: Human language technologies}, 746--751. Atlanta, Georgia: Association for Computational Linguistics. Retrieved from \url{https://www.aclweb.org/anthology/N13-1090}
 
 \leavevmode\hypertarget{ref-mu_2018}{}%
 Mu, J., Bhat, S., \& Viswanath, P. (2018). \emph{All-but-the-top: Simple and effective postprocessing for word representations}. Retrieved from \url{http://arxiv.org/abs/1702.01417}
