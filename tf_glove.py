@@ -98,7 +98,7 @@ class GloVeModel():
 
             embedding_product = tf.math.reduce_sum(tf.math.multiply(focal_embedding, context_embedding), 1)
 
-            log_cooccurrences = tf.math.log(tf.compat.v1.to_float(self.__cooccurrence_count))
+            log_cooccurrences = tf.math.log(tf.cast(self.__cooccurrence_count, tf.float32))
 
 
             distance_expr = tf.math.square(tf.math.add_n([
@@ -110,8 +110,7 @@ class GloVeModel():
             single_losses = tf.math.multiply(weighting_factor, distance_expr)
             self.__total_loss = tf.math.reduce_sum(single_losses)
             tf.summary.scalar("GloVe_loss", self.__total_loss)
-            self.__optimizer = tf.compat.v1.train.AdagradOptimizer(self.learning_rate).minimize(
-                self.__total_loss)
+            self.__optimizer = tf.compat.v1.train.AdagradOptimizer(self.learning_rate).minimize(self.__total_loss)
             self.__summary = tf.compat.v1.summary.merge_all()
 
             self.__combined_embeddings = tf.math.add(focal_embeddings, context_embeddings,
