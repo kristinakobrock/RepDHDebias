@@ -6,4 +6,5 @@
 __pycache__/
 # ignore non-zipped generated debiased embeddings
 debiased.p
+# can't push due to large size:
 glove_dhd.p
