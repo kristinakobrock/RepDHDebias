@@ -15,6 +15,7 @@ class GloVeModel():
     def __init__(self, embedding_size, context_size, max_vocab_size=100000, min_occurrences=1,
                  scaling_factor=3/4, cooccurrence_cap=100, batch_size=512, learning_rate=0.05):
         self.embedding_size = embedding_size
+        # check whether context window is supposed to differ left and right of word
         if isinstance(context_size, tuple):
             self.left_context, self.right_context = context_size
         elif isinstance(context_size, int):
@@ -38,6 +39,16 @@ class GloVeModel():
         self.__build_graph()
 
     def __fit_to_corpus(self, corpus, vocab_size, min_occurrences, left_size, right_size):
+        """
+        takes the given corpus and fits it into the model's training demands
+
+        takes
+        corpus = iterable of sentences
+        vocab_size = upper bound for vocab size
+        min_occurrences = minimal number of times word has to occur for inclusion in vocab
+        left_size = number of tokens included on left side of target word
+        right_size = number of tokens included on right side of target word
+        """
         word_counts = Counter()
         cooccurrence_counts = defaultdict(float)
         for region in corpus:
@@ -59,6 +70,10 @@ class GloVeModel():
             if words[0] in self.__word_to_id and words[1] in self.__word_to_id}
 
     def __build_graph(self):
+        """
+        enables graph execution
+        """
+
         self.__graph = tf.Graph()
         with self.__graph.as_default(), self.__graph.device(_device_for_node):
             count_max = tf.constant([self.cooccurrence_cap], dtype=tf.float32,
@@ -110,7 +125,8 @@ class GloVeModel():
             single_losses = tf.math.multiply(weighting_factor, distance_expr)
             self.__total_loss = tf.math.reduce_sum(single_losses)
             tf.summary.scalar("GloVe_loss", self.__total_loss)
-            self.__optimizer = tf.compat.v1.train.AdagradOptimizer(self.learning_rate).minimize(self.__total_loss)
+            # original used AdaGrad Optimizer, changed to Adam as that is todays' standard and also includes momentum
+            self.__optimizer = tf.compat.v1.train.AdamOptimizer(self.learning_rate).minimize(self.__total_loss)
             self.__summary = tf.compat.v1.summary.merge_all()
 
             self.__combined_embeddings = tf.math.add(focal_embeddings, context_embeddings,
@@ -151,6 +167,15 @@ class GloVeModel():
                 summary_writer.close()
 
     def embedding_for(self, word_str_or_id):
+        """
+        searches the trained embedding for a queried word or # ID
+
+        takes
+        word_str_or_id = either word or ID of the word in question
+
+        returns
+        the embedding of (1, embedding_size) dimensionality
+        """
         if isinstance(word_str_or_id, str):
             return self.embeddings[self.__word_to_id[word_str_or_id]]
         elif isinstance(word_str_or_id, int):
@@ -241,3 +266,5 @@ def _plot_with_labels(low_dim_embs, labels, path, size):
     if path is not None:
         figure.savefig(path)
         plt.close(figure)
+
+print("successfully loaded GloVe model")
