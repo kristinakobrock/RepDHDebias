@@ -92,7 +92,7 @@ With the help of the original paper, we were successfully able to re-implement H
 ## Evaluation 
 - stick to the paper
 
-```{r}
+```{r load dataframes}
 # load dataframes (computed in Evaluations.ipynb)
 weat_results <- read.csv('evaluation_results/results_weat.csv')
 nm_results <- read.csv('evaluation_results/results_nm.csv')
@@ -112,7 +112,7 @@ gg_results <- read.csv('evaluation_results/results_gg.csv')
 ### Debiasing at Embedding Level
 #### The Word Embeddings Association Test (WEAT) (Sonja)
 
-```{r}
+```{r table 1}
 knitr::kable(weat_results, caption="WEAT Test")
 ```
 
@@ -120,11 +120,11 @@ knitr::kable(weat_results, caption="WEAT Test")
 #### Neighborhood Metric (Meike)
 - discuss that this is shady in the discussion part
 
-```{r}
+```{r table 2}
 knitr::kable(nm_results, caption="Neighborhood Metric Clustering Accuracy")
 ```
 
-```{r}
+```{r tsne plot}
 knitr::include_graphics("evaluation_results/results_tsne.png")
 ```
 
@@ -139,7 +139,7 @@ The MSR word analogy dataset contains 8000 syntactic questions in the form prese
 
 The Google word analogy dataset contains 19.544 (**Total**) questions, 8.869 of which are semantic (**Sem**) and 10.675 are syntactic (**Syn**) questions.
 
-```{r}
+```{r tables 3 and 4}
 #ana_results <- full_join(msr_results, gg_results)
 #knitr::kable(ana_results, caption="Analogy Tasks")
 knitr::kable(msr_results, caption="MSR Word Analogy Task")
