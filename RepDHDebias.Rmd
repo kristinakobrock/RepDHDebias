@@ -147,7 +147,8 @@ As the code provided by @wang_2020 did not implement this evaluation and we fail
 ### Debiasing at Embedding Level
 #### The Word Embeddings Association Test (WEAT) (Sonja)
 
-```{r table 1}
+```{r}
+options(digits=4)
 knitr::kable(weat_results, col.names = c('Embeddings', 'C&F d', 'C&F p', 'M&A d', 'M&A p', 'S&A d', 'S&A p'), caption="WEAT Test")
 ```
 
@@ -160,6 +161,8 @@ Even though @wang_2020 make use of this metric within their proposed debiasing a
 
 
 ```{r table 2}
+#options(digits=2)
+nm_results <- mutate_if(nm_results, is.numeric, ~ . * 100) # get percentages
 apa_table(nm_results, col.names = c('Embeddings', 'Top 100', 'Top 500', 'Top 1000'), caption="Neighborhood Metric Clustering Accuracy")
 ```
 
@@ -180,6 +183,7 @@ The Google word analogy dataset contains 19.544 (**Total**) questions, 8.869 of 
 
 ```{r table 3}
 ana_results <- full_join(msr_results, gg_results)
+ana_results <- mutate_if(ana_results, is.numeric, ~ . * 100) # get percentages
 apa_table(ana_results, col.names = c('Embeddings', 'MSR', 'Sem', 'Syn', 'Total'), caption="Analogy Tasks")
 ```
 The results can be inspected in Table 3 and are in line with the results reported by @wang_2020. What is interesting is that our replicated Double-Hard debiased embedding scores best in all word analogy tasks and even outperforms the original GloVe embedding.

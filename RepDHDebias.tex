@@ -285,29 +285,29 @@ As the code provided by Wang et al. (2020) did not implement this evaluation and
 
 \begin{table}
 
-\caption{(\#tab:table 1)WEAT Test}
+\caption{\label{tab:unnamed-chunk-1}WEAT Test}
 \centering
 \begin{tabular}[t]{l|r|r|r|r|r|r}
 \hline
 Embeddings & C\&F d & C\&F p & M\&A d & M\&A p & S\&A d & S\&A p\\
 \hline
-original GloVe & 1.805996 & 0.0001524 & 0.6885951 & 0.0850657 & 1.1298693 & 0.0119380\\
+original GloVe & 1.806 & 0.0002 & 0.6886 & 0.0851 & 1.1299 & 0.0119\\
 \hline
-Double-Hard-GloVe (Wang et al.) & 1.531301 & 0.0010940 & -0.5625492 & 0.8692854 & -0.6502705 & 0.9027524\\
+Double-Hard-GloVe (Wang et al.) & 1.531 & 0.0011 & -0.5625 & 0.8693 & -0.6503 & 0.9028\\
 \hline
-Double-Hard-GloVe (replication) & 1.529532 & 0.0011171 & -0.6895229 & 0.9160087 & -0.9418647 & 0.9708258\\
+Double-Hard-GloVe (replication) & 1.530 & 0.0011 & -0.6895 & 0.9160 & -0.9419 & 0.9708\\
 \hline
-GN-Glove & 1.821105 & 0.0001351 & -0.2563579 & 0.6963340 & 1.0689540 & 0.0162131\\
+GN-Glove & 1.821 & 0.0001 & -0.2564 & 0.6963 & 1.0690 & 0.0162\\
 \hline
-GN-Glove(a) & 1.755476 & 0.0002232 & 0.5030034 & 0.1584799 & 0.8797335 & 0.0395316\\
+GN-Glove(a) & 1.756 & 0.0002 & 0.5030 & 0.1585 & 0.8797 & 0.0395\\
 \hline
-GP-GloVe & 1.805885 & 0.0001498 & 1.2085292 & 0.0078522 & 1.1064400 & 0.0131905\\
+GP-GloVe & 1.806 & 0.0001 & 1.2085 & 0.0079 & 1.1064 & 0.0132\\
 \hline
-GP-GN-GloVe & 1.797431 & 0.0001750 & -0.0126418 & 0.5079182 & 0.8460069 & 0.0453070\\
+GP-GN-GloVe & 1.797 & 0.0002 & -0.0126 & 0.5079 & 0.8460 & 0.0453\\
 \hline
-Hard-GloVe & 1.546646 & 0.0010009 & -0.9826043 & 0.9751140 & -0.5383765 & 0.8592254\\
+Hard-GloVe & 1.547 & 0.0010 & -0.9826 & 0.9751 & -0.5384 & 0.8592\\
 \hline
-Strong-Hard-GloVe & 1.546646 & 0.0009967 & -0.9856814 & 0.9754177 & -0.5471175 & 0.8625488\\
+Strong-Hard-GloVe & 1.547 & 0.0010 & -0.9857 & 0.9754 & -0.5471 & 0.8625\\
 \hline
 \end{tabular}
 \end{table}
@@ -331,6 +331,7 @@ Even though Wang et al. (2020) make use of this metric within their proposed deb
 \toprule
 Embeddings & Top 100 & Top 500 & Top 1000\\
 \midrule
+<<<<<<< Updated upstream
 original GloVe & 1.00 & 1.00 & 1.00\\
 Double-Hard-GloVe (Wang et al.) & 0.54 & 0.57 & 0.58\\
 Double-Hard-GloVe (replication) & 0.52 & 0.51 & 0.54\\
@@ -340,6 +341,17 @@ GP-GloVe & 1.00 & 1.00 & 1.00\\
 GP-GN-GloVe & 1.00 & 1.00 & 1.00\\
 Hard-GloVe & 0.51 & 0.52 & 0.50\\
 Strong-Hard-GloVe & 0.51 & 0.52 & 0.50\\
+=======
+original GloVe & 100.00 & 100.00 & 100.00\\
+Double-Hard-GloVe (Wang et al.) & 54.50 & 56.50 & 58.00\\
+Double-Hard-GloVe (replication) & 52.50 & 50.60 & 53.70\\
+GN-Glove & 100.00 & 99.90 & 99.90\\
+GN-Glove(a) & 100.00 & 99.70 & 98.35\\
+GP-GloVe & 100.00 & 100.00 & 100.00\\
+GP-GN-GloVe & 100.00 & 99.80 & 99.80\\
+Hard-GloVe & 51.00 & 51.70 & 50.30\\
+Strong-Hard-GloVe & 51.00 & 51.80 & 50.25\\
+>>>>>>> Stashed changes
 \bottomrule
 \end{tabular}
 
@@ -376,15 +388,15 @@ The Google word analogy dataset contains 19.544 (\textbf{Total}) questions, 8.86
 \toprule
 Embeddings & MSR & Sem & Syn & Total\\
 \midrule
-original GloVe & 0.54 & 0.80 & 0.56 & 0.64\\
-Double-Hard-GloVe (Wang et al.) & 0.42 & 0.71 & 0.48 & 0.57\\
-Double-Hard-GloVe (replication) & 0.62 & 0.80 & 0.67 & 0.71\\
-GN-Glove & 0.52 & 0.76 & 0.55 & 0.62\\
-GN-Glove(a) & 0.51 & 0.76 & 0.54 & 0.62\\
-GP-GloVe & 0.52 & 0.82 & 0.55 & 0.64\\
-GP-GN-GloVe & 0.52 & 0.76 & 0.57 & 0.63\\
-Hard-GloVe & 0.63 & 0.80 & 0.66 & 0.71\\
-Strong-Hard-GloVe & 0.62 & 0.77 & 0.66 & 0.69\\
+original GloVe & 54.40 & 80.14 & 55.69 & 63.90\\
+Double-Hard-GloVe (Wang et al.) & 42.40 & 71.36 & 47.99 & 56.67\\
+Double-Hard-GloVe (replication) & 62.12 & 80.20 & 66.55 & 71.13\\
+GN-Glove & 51.72 & 75.97 & 54.67 & 61.82\\
+GN-Glove(a) & 50.72 & 75.89 & 54.26 & 61.52\\
+GP-GloVe & 51.62 & 81.92 & 55.42 & 64.32\\
+GP-GN-GloVe & 51.99 & 75.75 & 56.68 & 63.08\\
+Hard-GloVe & 62.57 & 80.00 & 66.10 & 70.76\\
+Strong-Hard-GloVe & 62.14 & 76.74 & 65.73 & 69.43\\
 \bottomrule
 \end{tabular}
 
