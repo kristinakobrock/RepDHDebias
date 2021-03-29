@@ -5,8 +5,8 @@
 \documentclass[
   english,
   man,floatsintext]{apa6}
+\usepackage{amsmath,amssymb}
 \usepackage{lmodern}
-\usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
@@ -100,20 +100,6 @@
 % \setlength{\parindent}{0.5in}
 % \setlength{\parskip}{0pt plus 0pt minus 0pt}
 
-% Overwrite redefinition of paragraph and subparagraph by the default LaTeX template
-% See https://github.com/crsh/papaja/issues/292
-\makeatletter
-\renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
-  {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
-  {-1em}%
-  {\normalfont\normalsize\bfseries\itshape\typesectitle}}
-
-\renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{1em}%
-  {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
-  {-\z@\relax}%
-  {\normalfont\normalsize\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
-\makeatother
-
 % \usepackage{etoolbox}
 \makeatletter
 \patchcmd{\HyOrg@maketitle}
@@ -139,7 +125,10 @@
   \usepackage{polyglossia}
   \setmainlanguage[]{english}
 \else
-  \usepackage[shorthands=off,main=english]{babel}
+  \usepackage[main=english]{babel}
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
 \fi
 \ifluatex
   \usepackage{selnolig}  % disable illegal ligatures
@@ -148,22 +137,21 @@
 \setlength{\cslhangindent}{1.5em}
 \newlength{\csllabelwidth}
 \setlength{\csllabelwidth}{3em}
-\newenvironment{CSLReferences}[3] % #1 hanging-ident, #2 entry sp
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
  {% don't indent paragraphs
   \setlength{\parindent}{0pt}
   % turn on hanging indent if param 1 is 1
   \ifodd #1 \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces\fi
-  % set line spacing
   % set entry spacing
   \ifnum #2 > 0
-  \setlength{\parskip}{#3\baselineskip}
+  \setlength{\parskip}{#2\baselineskip}
   \fi
  }%
  {}
-\usepackage{calc} % for \widthof, \maxof
+\usepackage{calc}
 \newcommand{\CSLBlock}[1]{#1\hfill\break}
-\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\maxof{\widthof{#1}}{\csllabelwidth}}{#1}}
-\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth}{#1}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
 \title{Does Double-Hard Debias Keep its Promises? - A Replication Study}
@@ -240,6 +228,20 @@ With the help of the original paper, we were successfully able to re-implement H
 
 \hypertarget{double-hard-debias-meike}{%
 \subsubsection{Double-Hard Debias (Meike)}\label{double-hard-debias-meike}}
+
+As previously mentioned, the code provided by the authors' was rather unsatisfactory and superficial, which is why we choose to stick to the Pseudo code provided in the paper.
+
+The Double-Hard Debias algorithm is set up such that two different directions are removed from the original embeddings. The first one being one supposedly encoding frequency information, the second one being the gender direction, as proposed by Bolukbasi et al. (Bolukbasi, Chang, Zou, Saligrama, \& Kalai, 2016).
+In earlier work, Mu and Viswanath (2018) have shown, that further dimension reduction of word embeddings actually increases the linguistic regularities they capture. To do so, they first subtracted the common mean vector and then identified a few top principal components of the embedding space. After removing both of those components, the resulting word embeddings proof to serve as stronger representations. During the application of their algorithm, Mu and Viswanath (2018) noticed, that some the top PCA directions seemed to encode frequency to a significant degree.
+Wang et al. (2020) base their algorithm mostly on those findings and also apply PCA to their algorithm, claiming that to be a feasible method to identify directions of the embedding space encoding word frequency.
+
+The first part of the algorithm represents picking the frequency direction that shall ultimatly be removed from all embeddings.This is done in a trial-based set up on only the most biased words (500 male and female). Following Mu and Viswanath's (2018) work, the common mean vector is removed before PCA is applied.
+In the Pseudocode presented, the authors depict the computation of the same number of principal components as the dimensionality that the embeddings in question have. In the provided code, on the other hand, they only compute the top 10 principal components, which is what we ultimately replicated.
+For each of those PCs, the corresponding direction is removed, Hard Debias is applied on those projected embeddings, and performance of the resulting embeddings on the Neighborhood Metric, originally proposed by Gonen and Goldberg , is measured. This Metric and it's use is discussed in a more detailed manner in the evaluation part.
+Then, the PC is identified that lead to the best performance on the Neighborhood Metric, here meaning resulting in least biased embeddings.
+After identifying this component, it is picked out of all the PC candidates to\\
+This direction, supposedly encoding frequency as well as gender information, is picked to proceed to the second part of the algorithm.
+This second part deppicts the ``real'' debiasing of the full set of word embeddings, by first removing the recently identified direction, and subsequently applying Hard Debias.
 
 \hypertarget{evaluation}{%
 \subsection{Evaluation}\label{evaluation}}
@@ -469,7 +471,7 @@ Strong-Hard-GloVe & 0.7674129 & 0.6573463 & 0.6942879\\
 Baker, M. (2015). Reproducibility crisis: Blame it on the antibodies. \emph{Nature}, \emph{521}(7552), 274--276. https://doi.org/\url{https://doi.org/10.1038/521274a}
 
 \leavevmode\hypertarget{ref-belz_2021}{}%
-Belz, A., Agarwal, S., Shimorina, A., \& Reiter, E. (2021). \emph{A systematic review of reproducibility research in natural language processing}. Retrieved from \url{http://arxiv.org/abs/2103.07929}
+Belz, A., Agarwal, S., Shimorina, A., \& Reiter, E. (2021). A systematic review of reproducibility research in natural language processing. Retrieved from \url{http://arxiv.org/abs/2103.07929}
 
 \leavevmode\hypertarget{ref-bolukbasi_2016}{}%
 Bolukbasi, T., Chang, K.-W., Zou, J. Y., Saligrama, V., \& Kalai, A. (2016). Man is to computer programmer as woman is to homemaker? Debiasing word embeddings. \emph{CoRR}, \emph{abs/1607.06520}. Retrieved from \url{http://arxiv.org/abs/1607.06520}
@@ -478,43 +480,43 @@ Bolukbasi, T., Chang, K.-W., Zou, J. Y., Saligrama, V., \& Kalai, A. (2016). Man
 Caliskan, A., Bryson, J. J., \& Narayanan, A. (2017). Semantics derived automatically from language corpora contain human-like biases. \emph{Science}, \emph{356}(6334), 183--186. \url{https://doi.org/10.1126/science.aal4230}
 
 \leavevmode\hypertarget{ref-cohen_2018}{}%
-Cohen, K. B., Xia, J., Zweigenbaum, P., Callahan, T., Hargraves, O., Goss, F., \ldots{} Hunter, L. E. (2018). Three dimensions of reproducibility in natural language processing. \emph{Proceedings of the eleventh international conference on language resources and evaluation ({LREC} 2018)}. Miyazaki, Japan: European Language Resources Association (ELRA). Retrieved from \url{https://www.aclweb.org/anthology/L18-1025}
+Cohen, K. B., Xia, J., Zweigenbaum, P., Callahan, T., Hargraves, O., Goss, F., \ldots{} Hunter, L. E. (2018). Three dimensions of reproducibility in natural language processing. In \emph{Proceedings of the eleventh international conference on language resources and evaluation ({LREC} 2018)}. Miyazaki, Japan: European Language Resources Association (ELRA). Retrieved from \url{https://www.aclweb.org/anthology/L18-1025}
 
 \leavevmode\hypertarget{ref-collberg_2015}{}%
-Collberg, C., Proebsting, T., \& Warren, A. M. (2015). \emph{Repeatability and benefaction in computer systems research}. studie. Retrieved from \url{http://reproducibility.cs.arizona.edu/v2/RepeatabilityTR.pdf}
+Collberg, C., Proebsting, T., \& Warren, A. M. (2015). Repeatability and benefaction in computer systems research. studie. Retrieved from \url{http://reproducibility.cs.arizona.edu/v2/RepeatabilityTR.pdf}
 
 \leavevmode\hypertarget{ref-fokkens_2013}{}%
-Fokkens, A., Erp, M. van, Postma, M., Pedersen, T., Vossen, P., \& Freire, N. (2013). Offspring from reproduction problems: What replication failure teaches us. \emph{Proceedings of the 51st annual meeting of the association for computational linguistics (volume 1: Long papers)}, 1691--1701. Sofia, Bulgaria: Association for Computational Linguistics. Retrieved from \url{https://www.aclweb.org/anthology/P13-1166}
+Fokkens, A., Erp, M. van, Postma, M., Pedersen, T., Vossen, P., \& Freire, N. (2013). Offspring from reproduction problems: What replication failure teaches us. In \emph{Proceedings of the 51st annual meeting of the association for computational linguistics (volume 1: Long papers)} (pp. 1691--1701). Sofia, Bulgaria: Association for Computational Linguistics. Retrieved from \url{https://www.aclweb.org/anthology/P13-1166}
 
 \leavevmode\hypertarget{ref-gong_2018}{}%
-Gong, C., He, D., Tan, X., Qin, T., Wang, L., \& Liu, T.-Y. (2018). FRAGE: Frequency-agnostic word representation. In S. Bengio, H. Wallach, H. Larochelle, K. Grauman, N. Cesa-Bianchi, \& R. Garnett (Eds.), \emph{Advances in neural information processing systems} (Vol. 31, p. ). Curran Associates, Inc. Retrieved from \url{https://proceedings.neurips.cc/paper/2018/file/e555ebe0ce426f7f9b2bef0706315e0c-Paper.pdf}
+Gong, C., He, D., Tan, X., Qin, T., Wang, L., \& Liu, T.-Y. (2018). FRAGE: Frequency-agnostic word representation. In S. Bengio, H. Wallach, H. Larochelle, K. Grauman, N. Cesa-Bianchi, \& R. Garnett (Eds.), \emph{Advances in neural information processing systems} (Vol. 31). Curran Associates, Inc. Retrieved from \url{https://proceedings.neurips.cc/paper/2018/file/e555ebe0ce426f7f9b2bef0706315e0c-Paper.pdf}
 
 \leavevmode\hypertarget{ref-kaneko_2019}{}%
-Kaneko, M., \& Bollegala, D. (2019). Gender-preserving debiasing for pre-trained word embeddings. \emph{Proceedings of the 57th annual meeting of the association for computational linguistics}, 1641--1650. Florence, Italy: Association for Computational Linguistics. \url{https://doi.org/10.18653/v1/P19-1160}
+Kaneko, M., \& Bollegala, D. (2019). Gender-preserving debiasing for pre-trained word embeddings. In \emph{Proceedings of the 57th annual meeting of the association for computational linguistics} (pp. 1641--1650). Florence, Italy: Association for Computational Linguistics. \url{https://doi.org/10.18653/v1/P19-1160}
 
 \leavevmode\hypertarget{ref-mieskes_2017}{}%
-Mieskes, M. (2017). A quantitative study of data in the {NLP} community. \emph{Proceedings of the first {ACL} workshop on ethics in natural language processing}, 23--29. Valencia, Spain: Association for Computational Linguistics. \url{https://doi.org/10.18653/v1/W17-1603}
+Mieskes, M. (2017). A quantitative study of data in the {NLP} community. In \emph{Proceedings of the first {ACL} workshop on ethics in natural language processing} (pp. 23--29). Valencia, Spain: Association for Computational Linguistics. \url{https://doi.org/10.18653/v1/W17-1603}
 
 \leavevmode\hypertarget{ref-mieskes_2019}{}%
-Mieskes, M., Fort, K., Névéol, A., Grouin, C., \& Cohen, K. B. (2019). {NLP Community Perspectives on Replicability.} \emph{{Recent Advances in Natural Language Processing}}. Varna, Bulgaria. Retrieved from \url{https://hal.archives-ouvertes.fr/hal-02282794}
+Mieskes, M., Fort, K., Névéol, A., Grouin, C., \& Cohen, K. B. (2019). {NLP Community Perspectives on Replicability.} In \emph{{Recent Advances in Natural Language Processing}}. Varna, Bulgaria. Retrieved from \url{https://hal.archives-ouvertes.fr/hal-02282794}
 
 \leavevmode\hypertarget{ref-mikolov2013Google}{}%
-Mikolov, T., Chen, K., Corrado, G., \& Dean, J. (2013). \emph{Efficient estimation of word representations in vector space}. Retrieved from \url{http://arxiv.org/abs/1301.3781}
+Mikolov, T., Chen, K., Corrado, G., \& Dean, J. (2013). Efficient estimation of word representations in vector space. Retrieved from \url{http://arxiv.org/abs/1301.3781}
 
 \leavevmode\hypertarget{ref-mikolov2013MSR}{}%
-Mikolov, T., Yih, W., \& Zweig, G. (2013). Linguistic regularities in continuous space word representations. \emph{Proceedings of the 2013 conference of the north {A}merican chapter of the association for computational linguistics: Human language technologies}, 746--751. Atlanta, Georgia: Association for Computational Linguistics. Retrieved from \url{https://www.aclweb.org/anthology/N13-1090}
+Mikolov, T., Yih, W., \& Zweig, G. (2013). Linguistic regularities in continuous space word representations. In \emph{Proceedings of the 2013 conference of the north {A}merican chapter of the association for computational linguistics: Human language technologies} (pp. 746--751). Atlanta, Georgia: Association for Computational Linguistics. Retrieved from \url{https://www.aclweb.org/anthology/N13-1090}
 
 \leavevmode\hypertarget{ref-mu_2018}{}%
-Mu, J., Bhat, S., \& Viswanath, P. (2018). \emph{All-but-the-top: Simple and effective postprocessing for word representations}. Retrieved from \url{http://arxiv.org/abs/1702.01417}
+Mu, J., Bhat, S., \& Viswanath, P. (2018). All-but-the-top: Simple and effective postprocessing for word representations. Retrieved from \url{http://arxiv.org/abs/1702.01417}
 
 \leavevmode\hypertarget{ref-wang_2020}{}%
-Wang, T., Lin, X. V., Rajani, N. F., McCann, B., Ordonez, V., \& Xiong, C. (2020). Double-hard debias: Tailoring word embeddings for gender bias mitigation. \emph{Association for computational linguistics (ACL)}.
+Wang, T., Lin, X. V., Rajani, N. F., McCann, B., Ordonez, V., \& Xiong, C. (2020). Double-hard debias: Tailoring word embeddings for gender bias mitigation. In \emph{Association for computational linguistics (ACL)}.
 
 \leavevmode\hypertarget{ref-zhao_2018a}{}%
-Zhao, J., Wang, T., Yatskar, M., Ordonez, V., \& Chang, K.-W. (2018, January). \emph{Gender bias in coreference resolution: Evaluation and debiasing methods}. 15--20. \url{https://doi.org/10.18653/v1/N18-2003}
+Zhao, J., Wang, T., Yatskar, M., Ordonez, V., \& Chang, K.-W. (2018). Gender bias in coreference resolution: Evaluation and debiasing methods (pp. 15--20). \url{https://doi.org/10.18653/v1/N18-2003}
 
 \leavevmode\hypertarget{ref-zhao_2018b}{}%
-Zhao, J., Zhou, Y., Li, Z., Wang, W., \& Chang, K.-W. (2018). Learning gender-neutral word embeddings. \emph{Proceedings of the 2018 conference on empirical methods in natural language processing}, 4847--4853. Brussels, Belgium: Association for Computational Linguistics. \url{https://doi.org/10.18653/v1/D18-1521}
+Zhao, J., Zhou, Y., Li, Z., Wang, W., \& Chang, K.-W. (2018). Learning gender-neutral word embeddings. In \emph{Proceedings of the 2018 conference on empirical methods in natural language processing} (pp. 4847--4853). Brussels, Belgium: Association for Computational Linguistics. \url{https://doi.org/10.18653/v1/D18-1521}
 
 \end{CSLReferences}
 

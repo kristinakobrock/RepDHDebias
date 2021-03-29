@@ -63,7 +63,7 @@ Wang et al. [-@wang_2020] build on Hard Debias in their newly proposed Double Ha
 
 ### Motivation
 In this project, we aimed to replicate the debiasing method presented by Wang et al. [-@wang_2020] and to reproduce their experimental results as it is the most recent paper that proposes a post-processing technique for debiasing algorithms. 
-<!-- KK: Brauchen wir noch eine Definition von reproducibility bzw. replication? -->
+<!-- KK: Brauchen wir noch eine Definition von reproducibility bzw. replication? MK: ich find' das sind common-enough terms -->
 The reproduction of existing results is not only good practice in science, but it is also essential for gaining a deeper understanding on the methods used and it can help to validate existing results or to shed well-grounded doubt on them. Recent studies of reproducibility in the field of Computer Science [e.g. @collberg_2015] and NLP [e.g. @fokkens_2013; @mieskes_2017; @cohen_2018; @belz_2021] explain why reproducibility endeavours are often failing and shed light on the exact nature of the 'reproducibility crisis' [term coined by e.g. @baker_2015] in NLP research. Belz et al. [-@belz_2021], for example, report that the community's interest in topics of reproducibility have risen even though reproduction attempts still tend to fail due to problems like missing data, missing code and incomplete documentation [see also @fokkens_2013; @mieskes_2019]. 
 This project aims to make a contribution to the increasing body of reproducibility and replication attempts in NLP research.
 
@@ -93,7 +93,19 @@ With the help of the original paper, we were successfully able to re-implement H
 
 
 ### Double-Hard Debias (Meike)
+As previously mentioned, the code provided by the authors' was rather unsatisfactory and superficial, which is why we choose to stick to the Pseudo code provided in the paper. 
 
+The Double-Hard Debias algorithm is set up such that two different directions are removed from the original embeddings. The first one being one supposedly encoding frequency information, the second one being the gender direction, as proposed by Bolukbasi et al. [@bolukbasi_2016].
+In earlier work, Mu and Viswanath [-@mu_2018] have shown, that further dimension reduction of word embeddings actually increases the linguistic regularities they capture. To do so, they first subtracted the common mean vector and then identified a few top principal components of the embedding space. After removing both of those components, the resulting word embeddings proof to serve as stronger representations. During the application of their algorithm, Mu and Viswanath [-@mu_2018] noticed, that some the top PCA directions seemed to encode frequency to a significant degree. 
+Wang et al. [-@wang_2020] base their algorithm mostly on those findings and also apply PCA to their algorithm, claiming that to be a feasible method to identify directions of the embedding space encoding word frequency. 
+
+The first part of the algorithm represents picking the frequency direction that shall ultimatly be removed from all embeddings.This is done in a trial-based set up on only the most biased words (500 male and female). Following Mu and Viswanath's [-@mu_2018] work, the common mean vector is removed before PCA is applied.
+In the Pseudocode presented, the authors depict the computation of the same number of principal components as the dimensionality that the embeddings in question have. In the provided code, on the other hand, they only compute the top 10 principal components, which is what we ultimately replicated.
+For each of those PCs, the corresponding direction is removed, Hard Debias is applied on those projected embeddings, and performance of the resulting embeddings on the Neighborhood Metric, originally proposed by Gonen and Goldberg <!-- add REFERENCE and bibliography -->, is measured. This Metric and it's use is discussed in a more detailed manner in the evaluation part. 
+Then, the PC is identified that lead to the best performance on the Neighborhood Metric, here meaning resulting in least biased embeddings. 
+After identifying this component, it is picked out of all the PC candidates to  
+This direction, supposedly encoding frequency as well as gender information, is picked to proceed to the second part of the algorithm.
+This second part deppicts the "real" debiasing of the full set of word embeddings, by first removing the recently identified direction, and subsequently applying Hard Debias.
 
 ## Evaluation 
 - stick to the paper
