@@ -70,6 +70,9 @@ This project aims to make a contribution to the increasing body of reproducibili
 - explanation of model and training choices
 
 ### Pilot Study: Impact of Word Frequency (Meike)
+@wang_2020 claim, that the encoding of word frequency in embeddings also significantly influences the encoding of gender direction, thereby diminishing the effectiveness of debiasing algorithms. To ground their theory, a short pilot study is performed, in which word frequencies are artificially changed and changes in the resulting embeddings are investigated. 
+Specifically, they look at the difference vectors of the "definitional pairs", which should approximate the gender direction [@wang_2020].
+We could not replicate this study as closely to the paper as the other parts, due to constraints on our hardware, therefore leading to similar, but definitely less pronounced results. Ultimately though, even based on limited ressources, we could replicate that manually changing the word frequency statistics for a single word significantly influences the resulting gender direction of the embedding space. Thus, supporting the approach to put more emphasis on word frequency in the scope of debiasing.
 
 ### Datasets and Preliminaries (Sonja)
 As dataset we used the pre-trained, 300-dimensional GloVe embedding used and provided via link on Github by Wang et al. [-@wang_2020]. Further they also provided several more datasets that were obtained through different debiasing methods, some applied during training, some after. The authors] used these datasets as baselines for the evaluation to compare the perfomance of their Double-Hard Debias method to. Lastly they also provide the embedding that is the reult of applying their Double-Hard Debias alogrithm to the original, non-debiased GloVe embedding. We included all of these embeddings in our evaluation to compore to the result of our implementation of Double-Hard Debias.
@@ -89,19 +92,17 @@ With the help of the original paper, we were successfully able to re-implement H
 
 
 ### Double-Hard Debias (Meike)
-As previously mentioned, the code provided by the authors' was rather unsatisfactory and superficial, which is why we choose to stick to the Pseudo code provided in the paper. 
+As previously mentioned, the code provided by the authors' was rather unsatisfactory and superficial, which is why we were mostly guided by the Pseudocode provided in the paper [@wang_2020]. 
 
-The Double-Hard Debias algorithm is set up such that two different directions are removed from the original embeddings. The first one being one supposedly encoding frequency information, the second one being the gender direction, as proposed by Bolukbasi et al. [@bolukbasi_2016].
+The Double-Hard Debias algorithm is about removing two different directions from the embeddings. The first one being one supposedly encoding frequency information, the second one being the gender direction, as proposed by Bolukbasi et al. [-@bolukbasi_2016].
 In earlier work, Mu and Viswanath [-@mu_2018] have shown, that further dimension reduction of word embeddings actually increases the linguistic regularities they capture. To do so, they first subtracted the common mean vector and then identified a few top principal components of the embedding space. After removing both of those components, the resulting word embeddings proof to serve as stronger representations. During the application of their algorithm, Mu and Viswanath [-@mu_2018] noticed, that some the top PCA directions seemed to encode frequency to a significant degree. 
 Wang et al. [-@wang_2020] base their algorithm mostly on those findings and also apply PCA to their algorithm, claiming that to be a feasible method to identify directions of the embedding space encoding word frequency. 
-
 The first part of the algorithm represents picking the frequency direction that shall ultimatly be removed from all embeddings.This is done in a trial-based set up on only the most biased words (500 male and female). Following Mu and Viswanath's [-@mu_2018] work, the common mean vector is removed before PCA is applied.
 In the Pseudocode presented, the authors depict the computation of the same number of principal components as the dimensionality that the embeddings in question have. In the provided code, on the other hand, they only compute the top 10 principal components, which is what we ultimately replicated.
-For each of those PCs, the corresponding direction is removed, Hard Debias is applied on those projected embeddings, and performance of the resulting embeddings on the Neighborhood Metric, originally proposed by Gonen and Goldberg <!-- add REFERENCE and bibliography -->, is measured. This Metric and it's use is discussed in a more detailed manner in the evaluation part. 
+For each of those PCs, the corresponding direction is removed, Hard Debias is applied on those projected embeddings, and performance of the resulting embeddings on the Neighborhood Metric, originally proposed by Gonen and Goldberg [-@gonen_2019], is measured. This Metric and its use is discussed in a more detailed manner in the evaluation part. 
 Then, the PC is identified that lead to the best performance on the Neighborhood Metric, here meaning resulting in least biased embeddings. 
-After identifying this component, it is picked out of all the PC candidates to  
-This direction, supposedly encoding frequency as well as gender information, is picked to proceed to the second part of the algorithm.
-This second part deppicts the "real" debiasing of the full set of word embeddings, by first removing the recently identified direction, and subsequently applying Hard Debias.
+This direction, supposedly encoding frequency as well as gender information, is picked out of all candidate principal components for the second part of the algorithm.
+This second part focuses on truly debiasing the full set of word embeddings, first by removing the recently hand-picked frequency direction and then applying Hard Debias to also remove the gender direction.
 
 ## Evaluation 
 This part deals with the reproduction of @wang_2020's experimental results when evaluating their Double Hard debiased embedding compared to some baselines and on benchmark datasets using well-established tasks. Due to some code provided on the authors' Github repository, the task of re-implementing the evaluation part of the paper was much more straightforward than implementing the main part.
@@ -140,7 +141,8 @@ Double-Hard-GloVe(replication): Double-Hard debiased GloVe embedding obtained by
 ### Evaluation of Debiasing Performance 
 ### Debiasing in Downstream Applications
 #### Coreference Resolution (Meike)
-- no replication possible, no code provided 
+@wang_2020 also evaluated the performance of their resulting embeddings in Coreference systems. @zhao_2018a have shown that "The physician hired the secretary because he was overwhelmed with clients" is processed better, because "he" relates to "the physician", which is biased with a male gender association. In contrast, non-consistent sentences, such as "The physician hired the secretary because she was overwhelmed with clients" showed poorer performance.
+As the code provided by @wang_2020 did not implement this evaluation and we failed to reimplement the original @zhao_2018a Coreference task due to its huge computational demands, we decided to redirect our efforts to other feasible evaluation methods.
 
 ### Debiasing at Embedding Level
 #### The Word Embeddings Association Test (WEAT) (Sonja)
@@ -151,7 +153,11 @@ knitr::kable(weat_results, col.names = c('Embeddings', 'C&F d', 'C&F p', 'M&A d'
 
 
 #### Neighborhood Metric (Meike)
-- discuss that this is shady in the discussion part
+The Neighborhood Metric was originally introduced by @gonen_2019 and is based on the observation that even though debiased words no longer show their bias in form of a certain characteristic in the gender direction, the bias remains in the form of the grouping of the embeddings. The supposedly "removed" bias is still manifasted as those words socially-marked with the same gender will be situated closer to one another in the embedding space [@gonen_2019].
+When applying K-means clustering on a number of most biased words, the clustering algorithm easily clusters "debiased" embeddings into the correct male and female categories.
+@wang_2020 evaluate these clustering performances by simply counting the samples correctly assigned to the gender bias allegedly removed in debiasing. The alignment score $a$ is defined as $a = \frac{1}{2k}\sum_{i=1}^{2k}1[\hat{g_{i}}== g_{i}]$ and set to $a = max(a, 1-a)$ with $k$ resembling the number of samples for each gender, $\hat{g_{i}}$ the estimated and $g_{i}$ the correct label. According to this definition, an alignment value of 0.5 indicates perfectly unbiased embeddings, as the clustering algorithm failes to replicate the gender pattern [@wang_2020].
+Even though @wang_2020 make use of this metric within their proposed debiasing algorithm, thereby adjusting their embeddings to obtimize the Neighborhood Metric, they also apply it again in the scope of evaluating their debiasing performance. As one would expect, the Double-Hard debiased embeddings therefore do particularly well in comparison to the other Baseline embeddings.
+
 
 ```{r table 2}
 apa_table(nm_results, col.names = c('Embeddings', 'Top 100', 'Top 500', 'Top 1000'), caption="Neighborhood Metric Clustering Accuracy")
