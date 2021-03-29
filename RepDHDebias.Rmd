@@ -129,6 +129,7 @@ Double-Hard-GloVe(Wang et al.): Double-Hard debiased GloVe embedding obtained by
 
 Double-Hard-GloVe(replication): Double-Hard debiased GloVe embedding obtained by us. This is the result of applying our implementation of the Double-Hard Debias method to the original GloVe embedding.
 
+
 ### Evaluation of Debiasing Performance 
 ### Debiasing in Downstream Applications
 #### Coreference Resolution (Meike)
