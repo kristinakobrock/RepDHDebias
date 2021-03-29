@@ -75,6 +75,12 @@ This project aims to make a contribution to the increasing body of reproducibili
 ### Pilot Study: Impact of Word Frequency (Meike)
 
 ### Datasets and Preliminaries (Sonja)
+As dataset we used the pre-trained, 300-dimensional GloVe embedding used and provided via link on Github by Wang et al. [-@wang_2020]. Further they also provided several more datasets that were obtained through different debiasing methods, some applied during training, some after. The authors] used these datasets as baselines for the evaluation to compare the perfomance of their Double-Hard Debias method to. Lastly they also provide the embedding that is the reult of applying their Double-Hard Debias alogrithm to the original, non-debiased GloVe embedding. We included all of these embeddings in our evaluation to compore to the result of our implementation of Double-Hard Debias.
+
+The original files included 300-dimensional embeddings for 322.636 words. To avoid large downloads we decided to open the files via URL, however this was not possible for the Double-Hard Debiased embedding obtained by Wang et al. [-@wang_2020], therefor this embedding needs to be downloaded and open seperatly. From all the provided files we created for each embedding a vocabulary in form of a list, a dictionary mapping all words in the vocabulary to an ID and an embedding matrix that stores the 300-dimensional embedding of each word in the row corresponding to the ID of the word. During the pre-processing we restricted the vocabularies to the 50.000 most common words, which corresponds to the first 50.000 words in a GloVe embedding. At this point we also excluded any words that contain digits or special characters from our vocabularies. Both these actions follow the implementation provided by Wang et al. [-@wang_2020], however the restriction to 50.000 words is not documented and apparently only happens in the code demonstrating the Double-Hard debiasing method for computational reasons. We adopted this restriction for computational reasons as well as the hope to remove some less frequent words such as names from our embedding to obtain more general results. However unlike the authors we did not specifically remove any non lower case words as the GloVe embedding is lower-cased by default and we also refrained from excluding all words longer than 20 characters.
+
+We made use of a number of word sets provided by Wang et al. [-@wang_2020]. For the application of Hard Debias as proposed by Bolukbasi et al. [-@bolukbasi_2016] we need sets of male and female words as well as a set of neutral words. We will later explain how we obtained the sets of gendered words based on determining the gender direction. For this we used the supplied "definitional_pairs", a word set including pairs such as "he" and "she". To obtain the neutral set, we removed all words found in the files provided by Wang et al. [-@wang_2020] from our vocabulary. These files included besides the aforementioned "definitional_pairs" also "equalize_pairs", "gender_specific_full", "female_word_file" and "male_word_file" in the assumption that all these files include definitionally gendered words  that should not be included in the neutral set. However it stays unclear for some of these sets where Wang et al. [-@wang_2020] obtained them, except for "definitional_pairs" and "equalize_pairs" which are the gender pairs and equality sets as suggested by Bolukbasi et al. [-@bolukbasi_2016]. Since the "male_word_file" and the "female_word_file" include pairs of corresponding words such as "spokesman" and "spokeswoman" or "priest" and "nun" we also created a set of pairs based on these two files to be used with the debiasing algorithm.
+
 
 ### Hard Debias (Kristina)
 The authors make use of the Hard Debias algorithm proposed by Bolukbasi et al. [-@bolukbasi_2016]. The  paper at hand does not give much information on the exact implementation of Hard Debias used. The code uploaded to the authors' Github repository is not well documented, so we were not able to find the exact parts of the algorithm that should refer to the implementation of Hard Debias. That is why we sticked to the original paper from Bolukbasi et al. [-@bolukbasi_2016] in order to re-implement Hard Debias. 
@@ -103,11 +109,30 @@ gg_results <- read.csv('evaluation_results/results_gg.csv')
 
 
 ### Baselines (Sonja)
+Following Wang et al. [-@wang_2020] we used GloVe embeddings that were obtained using several different debiasing methods as baselines for our evaluation along with the original, non-debiased embedding.
+
+original GloVe: The original, non-debiased GloVe embedding used and provided by Wang et al. [-@wang_2020]. It was obtained from training on the 2017 January dump of English Wikipedia.
+
+GN-GloVe: Gender-Neutral GloVe embedding released by Zhao et al. [-@zhao_2018b]. This method restricts gender information in certain dimensions while neutralizing in the remaining dimensions.
+
+GN-GloVe(a): A variant of the Gender-Neutral GloVe embedding obtained by Wang et al. [-@wang_2020]. It was created by excluding the gender dimensions from the GN-GloVe embedding in a try to completly remove gender.
+
+GP-GloVe: Gender preserving GloVe embedding released by Kaneko and Bollegala [-@kaneko_2019]. This method attempts to remove stereotypical gender bias and preserve non-discriminative gender information.
+
+GP-GN-GloVe: Gender preserving, Gender-Neutral GloVe embedding provided by Kaneko and Bollegala [-@kaneko_2019]. This is the result of applying gender preserving debiasing to an already debiased GN-GloVe embedding.
+
+Hard-GloVe: Hard debiased GloVe embedding obtained by Wang et al. [-@wang_2020] following the implementation of Bolukbasi et al. [-@bolukbasi_2016]. This method aims to debias neutral words while preserving the gender specific words.
+
+Strong-Hard-GloVe: Strong-Hard debiased GloVe embedding obtained by Wang et al. [-@wang_2020]. A variant of Hard debias during which all words are debiased instead of only the neutral words.
+
+Double-Hard-GloVe(Wang et al.): Double-Hard debiased GloVe embedding obtained by Wang et al. [-@wang_2020]. This is the result of applying their proposed Double-Hard Debias method to the original GloVe embedding.
+
+Double-Hard-GloVe(replication): Double-Hard debiased GloVe embedding obtained by us. This is the result of applying our implementation of the Double-Hard Debias method to the original GloVe embedding.
 
 ### Evaluation of Debiasing Performance 
 ### Debiasing in Downstream Applications
 #### Coreference Resolution (Meike)
-- no replication possible, no code provided
+- no replication possible, no code provided 
 
 ### Debiasing at Embedding Level
 #### The Word Embeddings Association Test (WEAT) (Sonja)
