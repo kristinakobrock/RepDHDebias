@@ -75,11 +75,11 @@ Specifically, they look at the difference vectors of the "definitional pairs", w
 We could not replicate this study as closely to the paper as the other parts, due to constraints on our hardware, therefore leading to similar, but definitely less pronounced results. Ultimately though, even based on limited ressources, we could replicate that manually changing the word frequency statistics for a single word significantly influences the resulting gender direction of the embedding space. Thus, supporting the approach to put more emphasis on word frequency in the scope of debiasing.
 
 ### Datasets and Preliminaries (Sonja)
-As dataset we used the pre-trained, 300-dimensional GloVe embedding used and provided via link on Github by Wang et al. [-@wang_2020]. Further they also provided several more datasets that were obtained through different debiasing methods, some applied during training, some after. The authors] used these datasets as baselines for the evaluation to compare the perfomance of their Double-Hard Debias method to. Lastly they also provide the embedding that is the reult of applying their Double-Hard Debias alogrithm to the original, non-debiased GloVe embedding. We included all of these embeddings in our evaluation to compore to the result of our implementation of Double-Hard Debias.
+As dataset we used the pre-trained, 300-dimensional GloVe embedding used and provided via link on Github by @wang_2020. Further they also provided several more datasets that were obtained through different debiasing methods, some applied during training, some after. The authors] used these datasets as baselines for the evaluation to compare the perfomance of their Double-Hard Debias method to. Lastly they also provide the embedding that is the reult of applying their Double-Hard Debias alogrithm to the original, non-debiased GloVe embedding. We included all of these embeddings in our evaluation to compore to the result of our implementation of Double-Hard Debias.
 
-The original files included 300-dimensional embeddings for 322.636 words. To avoid large downloads we decided to open the files via URL, however this was not possible for the Double-Hard Debiased embedding obtained by Wang et al. [-@wang_2020], therefor this embedding needs to be downloaded and open seperatly. From all the provided files we created for each embedding a vocabulary in form of a list, a dictionary mapping all words in the vocabulary to an ID and an embedding matrix that stores the 300-dimensional embedding of each word in the row corresponding to the ID of the word. During the pre-processing we restricted the vocabularies to the 50.000 most common words, which corresponds to the first 50.000 words in a GloVe embedding. At this point we also excluded any words that contain digits or special characters from our vocabularies. Both these actions follow the implementation provided by Wang et al. [-@wang_2020], however the restriction to 50.000 words is not documented and apparently only happens in the code demonstrating the Double-Hard debiasing method for computational reasons. We adopted this restriction for computational reasons as well as the hope to remove some less frequent words such as names from our embedding to obtain more general results. However unlike the authors we did not specifically remove any non lower case words as the GloVe embedding is lower-cased by default and we also refrained from excluding all words longer than 20 characters.
+The original files included 300-dimensional embeddings for 322.636 words. To avoid large downloads we decided to open the files via URL, however this was not possible for the Double-Hard Debiased embedding obtained by @wang_2020, therefor this embedding needs to be downloaded and open seperatly. From all the provided files we created for each embedding a vocabulary in form of a list, a dictionary mapping all words in the vocabulary to an ID and an embedding matrix that stores the 300-dimensional embedding of each word in the row corresponding to the ID of the word. During the pre-processing we restricted the vocabularies to the 50.000 most common words, which corresponds to the first 50.000 words in a GloVe embedding. At this point we also excluded any words that contain digits or special characters from our vocabularies. Both these actions follow the implementation provided by @wang_2020, however the restriction to 50.000 words is not documented and apparently only happens in the code demonstrating the Double-Hard debiasing method for computational reasons. We adopted this restriction for computational reasons as well as the hope to remove some less frequent words such as names from our embedding to obtain more general results. However unlike the authors we did not specifically remove any non lower case words as the GloVe embedding is lower-cased by default and we also refrained from excluding all words longer than 20 characters.
 
-We made use of a number of word sets provided by Wang et al. [-@wang_2020]. For the application of Hard Debias as proposed by Bolukbasi et al. [-@bolukbasi_2016] we need sets of male and female words as well as a set of neutral words. We will later explain how we obtained the sets of gendered words based on determining the gender direction. For this we used the supplied "definitional_pairs", a word set including pairs such as "he" and "she". To obtain the neutral set, we removed all words found in the files provided by Wang et al. [-@wang_2020] from our vocabulary. These files included besides the aforementioned "definitional_pairs" also "equalize_pairs", "gender_specific_full", "female_word_file" and "male_word_file" in the assumption that all these files include definitionally gendered words  that should not be included in the neutral set. However it stays unclear for some of these sets where Wang et al. [-@wang_2020] obtained them, except for "definitional_pairs" and "equalize_pairs" which are the gender pairs and equality sets as suggested by Bolukbasi et al. [-@bolukbasi_2016]. Since the "male_word_file" and the "female_word_file" include pairs of corresponding words such as "spokesman" and "spokeswoman" or "priest" and "nun" we also created a set of pairs based on these two files to be used with the debiasing algorithm.
+We made use of a number of word sets provided by @wang_2020. For the application of Hard Debias as proposed by @bolukbasi_2016 we need sets of male and female words as well as a set of neutral words. We will later explain how we obtained the sets of gendered words based on determining the gender direction. For this we used the supplied "definitional_pairs", a word set including pairs such as *he* and *she*. To obtain the neutral set, we removed all words found in the files provided by @wang_2020 from our vocabulary. These files included besides the aforementioned "definitional_pairs" also "equalize_pairs", "gender_specific_full", "female_word_file" and "male_word_file" in the assumption that all these files include definitionally gendered words  that should not be included in the neutral set. However it stays unclear for some of these sets where @wang_2020 obtained them, except for "definitional_pairs" and "equalize_pairs" which are the gender pairs and equality sets as suggested by @bolukbasi_2016. Since the "male_word_file" and the "female_word_file" include pairs of corresponding words such as *spokesman* and *spokeswoman* or *priest* and *nun* we also created a set of pairs based on these two files to be used with the debiasing algorithm.
 
 
 ### Hard Debias (Kristina)
@@ -117,23 +117,23 @@ gg_results <- read.csv('evaluation_results/results_gg.csv')
 ```
 
 ### Baselines (Sonja)
-Following Wang et al. [-@wang_2020] we used GloVe embeddings that were obtained using several different debiasing methods as baselines for our evaluation along with the original, non-debiased embedding.
+Following @wang_2020 we used GloVe embeddings that were obtained using several different debiasing methods as baselines for our evaluation along with the original, non-debiased embedding.
 
-original GloVe: The original, non-debiased GloVe embedding used and provided by Wang et al. [-@wang_2020]. It was obtained from training on the 2017 January dump of English Wikipedia.
+original GloVe: The original, non-debiased GloVe embedding used and provided by @wang_2020. It was obtained from training on the 2017 January dump of English Wikipedia.
 
-GN-GloVe: Gender-Neutral GloVe embedding released by Zhao et al. [-@zhao_2018b]. This method restricts gender information in certain dimensions while neutralizing in the remaining dimensions.
+GN-GloVe: Gender-Neutral GloVe embedding released by @zhao_2018b. This method restricts gender information in certain dimensions while neutralizing in the remaining dimensions.
 
-GN-GloVe(a): A variant of the Gender-Neutral GloVe embedding obtained by Wang et al. [-@wang_2020]. It was created by excluding the gender dimensions from the GN-GloVe embedding in a try to completly remove gender.
+GN-GloVe(a): A variant of the Gender-Neutral GloVe embedding obtained by @wang_2020. It was created by excluding the gender dimensions from the GN-GloVe embedding in a try to completly remove gender.
 
-GP-GloVe: Gender preserving GloVe embedding released by Kaneko and Bollegala [-@kaneko_2019]. This method attempts to remove stereotypical gender bias and preserve non-discriminative gender information.
+GP-GloVe: Gender preserving GloVe embedding released by @kaneko_2019. This method attempts to remove stereotypical gender bias and preserve non-discriminative gender information.
 
-GP-GN-GloVe: Gender preserving, Gender-Neutral GloVe embedding provided by Kaneko and Bollegala [-@kaneko_2019]. This is the result of applying gender preserving debiasing to an already debiased GN-GloVe embedding.
+GP-GN-GloVe: Gender preserving, Gender-Neutral GloVe embedding provided by @kaneko_2019. This is the result of applying gender preserving debiasing to an already debiased GN-GloVe embedding.
 
-Hard-GloVe: Hard debiased GloVe embedding obtained by Wang et al. [-@wang_2020] following the implementation of Bolukbasi et al. [-@bolukbasi_2016]. This method aims to debias neutral words while preserving the gender specific words.
+Hard-GloVe: Hard debiased GloVe embedding obtained by @wang_2020 following the implementation of @bolukbasi_2016. This method aims to debias neutral words while preserving the gender specific words.
 
-Strong-Hard-GloVe: Strong-Hard debiased GloVe embedding obtained by Wang et al. [-@wang_2020]. A variant of Hard debias during which all words are debiased instead of only the neutral words.
+Strong-Hard-GloVe: Strong-Hard debiased GloVe embedding obtained by @wang_2020. A variant of Hard debias during which all words are debiased instead of only the neutral words.
 
-Double-Hard-GloVe(Wang et al.): Double-Hard debiased GloVe embedding obtained by Wang et al. [-@wang_2020]. This is the result of applying their proposed Double-Hard Debias method to the original GloVe embedding.
+Double-Hard-GloVe(Wang et al.): Double-Hard debiased GloVe embedding obtained by @wang_2020. This is the result of applying their proposed Double-Hard Debias method to the original GloVe embedding.
 
 Double-Hard-GloVe(replication): Double-Hard debiased GloVe embedding obtained by us. This is the result of applying our implementation of the Double-Hard Debias method to the original GloVe embedding.
 
@@ -146,11 +146,40 @@ As the code provided by @wang_2020 did not implement this evaluation and we fail
 
 ### Debiasing at Embedding Level
 #### The Word Embeddings Association Test (WEAT) (Sonja)
+Following along the evaluation of @wang_2020 we tested the bias of different embeddings with the Word Embedding Association Test(@caliskan_2017). As a permutations test, WEAT takes four sets of words, two sets of so-called target words and two sets of attribute words. It calculates the relative similarity between the target words and the attribute words respectively and outputs in the end how likely it is that this result, the difference between the mean similarities for the different sets, could have been obtained from a non-biased distribution. The two values it returns are the effective size d and the p-value p. A p-value smaller than 0.05 indicates a significant bias and the bias is considered stronger for a larger effective size.
+
+As part of the evaluation and not direct implementation of the paper we decided to use a pre-implemented version of WEAT for our evaluation. However, instead of re-using the code of @wang_2020 we decided for a different WEAT implementation that is oriented on the original paper by @caliskan_2017. 
+
+@wang_2020 conducted WEAT three times for each embedding, once with the bias "Career & Family", once with "Math & Arts" and lastly with "Science & Arts". We replicated all three of these with the word lists taken directly from @caliskan_2017. These include:
+
+1. "Career & Family":
+Male names: *John, Paul, Mike, Kevin, Steve, Greg, Jeff, Bill*
+Female names: *Amy, Joan, Lisa, Sarah, Diana, Kate, Ann, Donna*
+Career words: *executive, management, professional, corporation, salary, office, business, career*
+Family words: *home, parents, children, family, cousins, marriage, wedding, relatives*
+
+2. "Math & Arts":
+Math words: *math, algebra, geometry, calculus, equations, computation, numbers, addition*
+Arts words: *poetry, art, dance, literature, novel, symphony, drama, sculpture*
+Male attributes: *male, man, boy, brother, he, him, his, son*
+Female attributes: *female, woman, girl, sister, she, her, hers, daughter*
+
+3. "Science & Arts":
+Science words: *science, technology, ohysics, chemistry, Einstein, NASA, experiment, astronomy*
+Arts words: *poetry, art, Shakespeare, dance, literature, novel, symphony, drama*
+Male attributes: *brother, father, uncle, grandfather, son, he, his, him*
+Female attributes: *sister, mother, aunt, grandmother, daughter, she, hers, her*
+
+Following @wang_2020, we made one alteration to this set, namely exchanging *Bill* in the male names of the "Career & Family" set for *Tom*. This is to avoid ambiguity due to the lower-casing of GloVe. The results we obtained can be seen in Table 1.
 
 ```{r}
 options(digits=4)
 knitr::kable(weat_results, col.names = c('Embeddings', 'C&F d', 'C&F p', 'M&A d', 'M&A p', 'S&A d', 'S&A p'), caption="WEAT Test")
 ```
+
+With the WEAT implementation we sued we were able to almost perfectly recreate the results of @wang_2020 for the "Career & Family" word sets. Therefor we assume our implementation to be comparable to that of @wang_2020. Both the effective size and the p-value differ only slightly from the reported values and we can clearly seehat for the Double-Hard debiased embeddings the p-value is larger not only in comparison to the original embedding but also the other debiasing methods. Despite the bias still being significant(p-value > 0.05), it is the least significant for the Double-Hard debiased embedding, which can be inferred from the effective size being the smallest. We were also able to obtain somparable resutls for the Double-Hard debiased embeddings provided by @wang_2020 and for our self-debiased embedding.
+
+However for both "Math & Arts" and "Science & Arts" we obtained values for the effective size and the p-value that partly differ significantly from the values reporter by the authors. However, as in @wang_2020, we can see that the bias in "Math & Arts" was already insignificant in the original GloVe embedding but became even less significant through debiasing. For both word sets the bias appears to be insignificant for both Double-Hard debiased embeddings.
 
 
 #### Neighborhood Metric (Meike)
@@ -189,6 +218,7 @@ apa_table(ana_results, col.names = c('Embeddings', 'MSR', 'Sem', 'Syn', 'Total')
 The results can be inspected in Table 3 and are in line with the results reported by @wang_2020. What is interesting is that our replicated Double-Hard debiased embedding scores best in all word analogy tasks and even outperforms the original GloVe embedding.
 
 #### Concept Categorization (Sonja)
+@wang_2020 applied this evaluation method to all the different embedding baselines and their Double-Hard debiased embedding as well. However, we found the code provided by the authors to be incomplete. It was missing the application of the Kmeans algorithm as well as the evaluation of this and due to time constraints we decided not to implement this method as we are confident that we already proved the retaining of word semantics with the Word Analogy Task.
 
 
 ## Discussion
