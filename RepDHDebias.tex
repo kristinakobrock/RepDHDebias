@@ -5,8 +5,8 @@
 \documentclass[
   english,
   man,floatsintext]{apa6}
+\usepackage{amsmath,amssymb}
 \usepackage{lmodern}
-\usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
@@ -100,20 +100,6 @@
 % \setlength{\parindent}{0.5in}
 % \setlength{\parskip}{0pt plus 0pt minus 0pt}
 
-% Overwrite redefinition of paragraph and subparagraph by the default LaTeX template
-% See https://github.com/crsh/papaja/issues/292
-\makeatletter
-\renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
-  {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
-  {-1em}%
-  {\normalfont\normalsize\bfseries\itshape\typesectitle}}
-
-\renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{1em}%
-  {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
-  {-\z@\relax}%
-  {\normalfont\normalsize\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
-\makeatother
-
 % \usepackage{etoolbox}
 \makeatletter
 \patchcmd{\HyOrg@maketitle}
@@ -139,7 +125,10 @@
   \usepackage{polyglossia}
   \setmainlanguage[]{english}
 \else
-  \usepackage[shorthands=off,main=english]{babel}
+  \usepackage[main=english]{babel}
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
 \fi
 \ifluatex
   \usepackage{selnolig}  % disable illegal ligatures
@@ -148,22 +137,21 @@
 \setlength{\cslhangindent}{1.5em}
 \newlength{\csllabelwidth}
 \setlength{\csllabelwidth}{3em}
-\newenvironment{CSLReferences}[3] % #1 hanging-ident, #2 entry sp
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
  {% don't indent paragraphs
   \setlength{\parindent}{0pt}
   % turn on hanging indent if param 1 is 1
   \ifodd #1 \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces\fi
-  % set line spacing
   % set entry spacing
   \ifnum #2 > 0
-  \setlength{\parskip}{#3\baselineskip}
+  \setlength{\parskip}{#2\baselineskip}
   \fi
  }%
  {}
-\usepackage{calc} % for \widthof, \maxof
+\usepackage{calc}
 \newcommand{\CSLBlock}[1]{#1\hfill\break}
-\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\maxof{\widthof{#1}}{\csllabelwidth}}{#1}}
-\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth}{#1}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
 \title{Does Double-Hard Debias Keep its Promises? - A Replication Study}
@@ -193,12 +181,14 @@ Wang et al. (2020) build on Hard Debias in their newly proposed Double Hard Debi
 
 In this project for the course ``Implementing ANNs with Tensorflow,'' we aimed to replicate the debiasing method presented by Wang et al. (2020) and to reproduce their experimental results. We chose the paper because it is the most recent one that proposes a post-processing technique for debiasing algorithms and because it builds on the seminal paper by Bolukbasi, Chang, Zou, Saligrama, and Kalai (2016).
 In the following, we would like to quickly motivate our choice of topic by relating it to the course and stating a motivation for replication and reproduction attempts in general.
-The course covered a huge breadth of topics ranging from the simplest neural network architectures to advanced Convolutional Neural Networks (CNN) and recently proposed Transformer models (Vaswani et al., 2017). One of the topics covered that stroke us the most interesting was Deep Learning for Natural Language Processing (NLP) covering word embeddings, language models as well as Seq2seq models and preprocessing techniques. So our aim was to find a final project that would combine knowledge on NLP that we learned in the course with some interesting topic that would motivate our specific choice of project. The extra session on ``Ethical aspects of ML'' held by Pascal and Annie was a great starting point and we decided to settle on bias in word embeddings as a topic. Our search on papers proposing debiasing algorithms led us to the work described above and we decided to do re-implement the paper by Wang et al. (2020). This gave us the opportunity to apply a variety of skills learned in the course ranging from preprocessing datasets for NLP tasks, over skillfully working with word embeddings, to understanding, fine-tuning and training a NN model that we did not know before (GloVe).
+The course covered a huge breadth of topics ranging from the simplest neural network architectures to advanced Convolutional Neural Networks (CNN) and recently proposed Transformer models (Vaswani et al., 2017). One of the topics covered that stroke us the most interesting was Deep Learning for Natural Language Processing (NLP) covering word embeddings, language models, as well as Seq2seq models and preprocessing techniques. So our aim was to find a final project that would combine knowledge on NLP that we learned in the course with some interesting topic that would motivate our specific choice of project. The extra session on ``Ethical aspects of ML'' held by Pascal and Annie was a great starting point and we decided to settle on bias in word embeddings as a topic. Our search on papers proposing debiasing algorithms led us to the work described above and we decided to do re-implement the paper by Wang et al. (2020). This gave us the opportunity to apply a variety of skills learned in the course ranging from preprocessing datasets for NLP tasks, over skillfully working with word embeddings, to understanding, fine-tuning and training a NN model that we did not know before (GloVe).
 The reproduction of existing results is not only good practice in science, but it is also essential for gaining a deeper understanding on the methods used and it can help to validate existing results or to shed well-grounded doubt on them where needed. Recent studies of reproducibility in the field of Computer Science (e.g. Collberg, Proebsting, \& Warren, 2015) and NLP (Belz, Agarwal, Shimorina, \& Reiter, 2021; Cohen et al., 2018; e.g. Fokkens et al., 2013; Mieskes, 2017) explain why reproducibility endeavours are often failing and shed light on the exact nature of the `reproducibility crisis' (term coined by e.g. Baker, 2015) in NLP research. Belz, Agarwal, Shimorina, and Reiter (2021), for example, report that the community's interest in topics of reproducibility have risen even though reproduction attempts still tend to fail due to problems like missing data, missing code and incomplete documentation (see also Fokkens et al., 2013; Mieskes, Fort, Névéol, Grouin, \& Cohen, 2019).
 This project aims to make a contribution to the increasing body of reproducibility and replication attempts in NLP research.
 
 \hypertarget{implementation}{%
 \subsection{Implementation}\label{implementation}}
+
+When starting our reproduction endavours, we quite quickly noticed that the code provided by Wang et al. (2020) deviated from the paper's statements in quite some relevant aspects. This, additional to the rather low readability and poor documentation of the code, lead us to focus on replicating the approach as it was originally proposed in the paper. In the following, we will explain exactly what we replicated, how we did so and what might have motivated specific choices we made.
 
 \begin{itemize}
 \tightlist
@@ -211,25 +201,25 @@ This project aims to make a contribution to the increasing body of reproducibili
 \hypertarget{pilot-study-impact-of-word-frequency-meike}{%
 \subsubsection{Pilot Study: Impact of Word Frequency (Meike)}\label{pilot-study-impact-of-word-frequency-meike}}
 
-Wang et al. (2020) claim, that the encoding of word frequency in embeddings also significantly influences the encoding of gender direction, thereby diminishing the effectiveness of debiasing algorithms. To ground their theory, a short pilot study is performed, in which word frequencies are artificially changed and changes in the resulting embeddings are investigated.
-Specifically, they look at the difference vectors of the ``definitional pairs,'' which should approximate the gender direction (Wang et al., 2020).
-We could not replicate this study as closely to the paper as the other parts, due to constraints on our hardware, therefore leading to similar, but definitely less pronounced results. Ultimately though, even based on limited ressources, we could replicate that manually changing the word frequency statistics for a single word significantly influences the resulting gender direction of the embedding space. Thus, supporting the approach to put more emphasis on word frequency in the scope of debiasing.
+Double-Hard Debias is built on the claim that the embeddings' encoding of word frequency significantly influences the same embeddings' encoding of gender. This can lead to a diminished efficacy of debiasing algorithms (Wang et al., 2020). To ground their theory, Wang et al. (2020) perform a short pilot study, in which word frequencies are artificially changed and differences in the resulting embeddings are investigated.
+Specifically, they focus on the set of ``definitional pairs,'' word pairs originally presented by Bolukbasi, Chang, Zou, Saligrama, and Kalai (2016), whose difference vectors approximate the gender direction (Wang et al., 2020).
+We could not replicate the author's approach as neatly as other parts of the paper due to hardware constraints, therefore leaving us with similar, but definitely less pronounced, results. Ultimately though, even when working with limited ressources, one can replicate that manually changing the word frequency statistics for a single word significantly influences the resulting gender direction of the embedding space. Thus supporting the position to put enhanced emphasis on word frequency in the scope of gender debiasing.
 
 \hypertarget{datasets-and-preliminaries-sonja}{%
 \subsubsection{Datasets and Preliminaries (Sonja)}\label{datasets-and-preliminaries-sonja}}
 
-As dataset we used the pre-trained, 300-dimensional GloVe embedding used and provided via link on Github by Wang et al. (2020). Further they also provided several more datasets that were obtained through different debiasing methods, some applied during training, some after. The authors{]} used these datasets as baselines for the evaluation to compare the perfomance of their Double-Hard Debias method to. Lastly they also provide the embedding that is the reult of applying their Double-Hard Debias alogrithm to the original, non-debiased GloVe embedding. We included all of these embeddings in our evaluation to compore to the result of our implementation of Double-Hard Debias.
+As dataset we used the pre-trained, 300-dimensional GloVe embedding used and provided via link on Github by Wang et al. (2020). Further they also provided several more datasets that were obtained through different debiasing methods, some applied during training, some after. The authors{]} used these datasets as baselines for the evaluation to compare the perfomance of their Double-Hard Debias method to. Lastly they also provide the embedding that is the result of applying their Double-Hard Debias alogrithm to the original, non-debiased GloVe embedding. We included all of these embeddings in our evaluation to compare to the result of our implementation of Double-Hard Debias.
 
-The original files included 300-dimensional embeddings for 322.636 words. To avoid large downloads we decided to open the files via URL, however this was not possible for the Double-Hard Debiased embedding obtained by Wang et al. (2020), therefor this embedding needs to be downloaded and open seperatly. From all the provided files we created for each embedding a vocabulary in form of a list, a dictionary mapping all words in the vocabulary to an ID and an embedding matrix that stores the 300-dimensional embedding of each word in the row corresponding to the ID of the word. During the pre-processing we restricted the vocabularies to the 50.000 most common words, which corresponds to the first 50.000 words in a GloVe embedding. At this point we also excluded any words that contain digits or special characters from our vocabularies. Both these actions follow the implementation provided by Wang et al. (2020), however the restriction to 50.000 words is not documented and apparently only happens in the code demonstrating the Double-Hard debiasing method for computational reasons. We adopted this restriction for computational reasons as well as the hope to remove some less frequent words such as names from our embedding to obtain more general results. However unlike the authors we did not specifically remove any non lower case words as the GloVe embedding is lower-cased by default and we also refrained from excluding all words longer than 20 characters.
+The original files included 300-dimensional embeddings for 322.636 words. To avoid large downloads we decided to open the files via URL, however this was not possible for the Double-Hard Debiased embedding obtained by Wang et al. (2020), therefore this embedding needs to be downloaded and open separately. From all the provided files we created for each embedding a vocabulary in form of a list, a dictionary mapping all words in the vocabulary to an ID and an embedding matrix that stores the 300-dimensional embedding of each word in the row corresponding to the ID of the word. During the pre-processing we restricted the vocabularies to the 50.000 most common words, which corresponds to the first 50.000 words in a GloVe embedding. At this point we also excluded any words that contain digits or special characters from our vocabularies. Both these actions follow the implementation provided by Wang et al. (2020), however the restriction to 50.000 words is not documented and apparently only happens in the code demonstrating the Double-Hard debiasing method for computational reasons. We adopted this restriction for computational reasons as well as the hope to remove some less frequent words such as names from our embedding to obtain more general results. However, unlike the authors, we did not specifically remove any non lower case words as the GloVe embedding is lower-cased by default and we also refrained from excluding all words longer than 20 characters.
 
-We made use of a number of word sets provided by Wang et al. (2020). For the application of Hard Debias as proposed by Bolukbasi, Chang, Zou, Saligrama, and Kalai (2016) we need sets of male and female words as well as a set of neutral words. We will later explain how we obtained the sets of gendered words based on determining the gender direction. For this we used the supplied ``definitional\_pairs,'' a word set including pairs such as \emph{he} and \emph{she}. To obtain the neutral set, we removed all words found in the files provided by Wang et al. (2020) from our vocabulary. These files included besides the aforementioned ``definitional\_pairs'' also ``equalize\_pairs,'' ``gender\_specific\_full,'' ``female\_word\_file'' and ``male\_word\_file'' in the assumption that all these files include definitionally gendered words that should not be included in the neutral set. However it stays unclear for some of these sets where Wang et al. (2020) obtained them, except for ``definitional\_pairs'' and ``equalize\_pairs'' which are the gender pairs and equality sets as suggested by Bolukbasi, Chang, Zou, Saligrama, and Kalai (2016). Since the ``male\_word\_file'' and the ``female\_word\_file'' include pairs of corresponding words such as \emph{spokesman} and \emph{spokeswoman} or \emph{priest} and \emph{nun} we also created a set of pairs based on these two files to be used with the debiasing algorithm.
+We made use of a number of word sets provided by Wang et al. (2020). For the application of Hard Debias as proposed by Bolukbasi, Chang, Zou, Saligrama, and Kalai (2016) we need sets of male and female words as well as a set of neutral words. We will later explain how we obtained the sets of gendered words based on determining the gender direction. For this we used the supplied ``definitional\_pairs,'' a word set including pairs such as \emph{he} and \emph{she}. To obtain the neutral set, we removed all words found in the files provided by Wang et al. (2020) from our vocabulary. These files included besides the aforementioned ``definitional\_pairs'' also ``equalize\_pairs,'' ``gender\_specific\_full,'' ``female\_word\_file'' and ``male\_word\_file'' in the assumption that all these files include definitionally gendered words that should not be included in the neutral set. However it remains unclear for some of these sets where Wang et al. (2020) obtained them, except for ``definitional\_pairs'' and ``equalize\_pairs'' which are the gender pairs and equality sets as suggested by Bolukbasi, Chang, Zou, Saligrama, and Kalai (2016). Since the ``male\_word\_file'' and the ``female\_word\_file'' include pairs of corresponding words such as \emph{spokesman} and \emph{spokeswoman} or \emph{priest} and \emph{nun} we also created a set of pairs based on these two files to be used with the debiasing algorithm.
 
 \hypertarget{hard-debias-kristina}{%
 \subsubsection{Hard Debias (Kristina)}\label{hard-debias-kristina}}
 
 The authors make use of the Hard Debias algorithm proposed by Bolukbasi, Chang, Zou, Saligrama, and Kalai (2016). The paper at hand does not give much information on the exact implementation of Hard Debias used. The code uploaded to the authors' Github repository is not well documented, so we were not able to find the exact parts of the algorithm that should refer to the implementation of Hard Debias. That is why we sticked to the original paper from Bolukbasi, Chang, Zou, Saligrama, and Kalai (2016) in order to re-implement Hard Debias.
 
-The paper describes two steps: First, the gender direction (or, more generally, the subspace) has to be identified. This is achieved with the help of defining sets \(D_1, D_2, ..., D_n \subset W\) which consist of \emph{gender specific} words, i.e.~words which are associated with a gender by definition like ``girl, boy'' or ``she, he.'' These are the words that can help to identify the gender direction by capturing the concept \emph{female, male} in the embedding \(\{\vec{w}\in\mathbb{R}^d\}_{w\in W}\). Whereas in some simple implementations of Hard Debias, only one definitional pair might be used, Bolukbasi, Chang, Zou, Saligrama, and Kalai (2016) suggest to compute the gender direction \(B\) across multiple pairs to more robustly estimate the bias. In our implementation we used the 10 word pairs suggested by Bolukbasi, Chang, Zou, Saligrama, and Kalai (2016) which were experimentally shown to agree with an intuitive concept of gender. For these 10 pairs the principal components (PCs) are calculated and the bias subspace \(B\) is made of the first \(k \geq 1\) rows of the decomposition SVD(\(C\)). According to Bolukbasi, Chang, Zou, Saligrama, and Kalai (2016), the first eigenvalue is significantly larger than the rest and so the top PC is hypothesized to capture the gender subspace. So \(k=1\) is chosen and our resulting gender subspace \(B\) is thus simply a direction. C is calculated in the following way: \[C:=\sum_{i=1}^n \sum_{w\in D_i}(\vec{w}-\mu_i)^T(\vec{w}-\mu_i)/|D_i|\] where \(\mu_i := \sum_{w\in D_i}\vec{w}/|D_i|\) are the means of the defining sets \(D_1, D_2, ..., D_n \subset W\).
+The paper describes two steps: First, the gender direction (or, more generally, the subspace) has to be identified. This is achieved with the help of defining sets \(D_1, D_2, ..., D_n \subset W\) which consist of \emph{gender specific} words, i.e.~words which are associated with a gender by definition like ``girl, boy'' or ``she, he.'' These are the words that can help to identify the gender direction by capturing the concept \emph{female, male} in the embedding \(\{\vec{w}\in\mathbb{R}^d\}_{w\in W}\). Whereas in some simple implementations of Hard Debias, only one definitional pair might be used, Bolukbasi, Chang, Zou, Saligrama, and Kalai (2016) suggest to compute the gender direction \(B\) across multiple pairs to more robustly estimate the bias. In our implementation we used the 10 word pairs suggested by Bolukbasi, Chang, Zou, Saligrama, and Kalai (2016) which were experimentally shown to agree with an intuitive concept of gender. For these 10 pairs the principal components (PCs) are calculated and the bias subspace \(B\) is made of the first \(k \geq 1\) rows of the decomposition SVD(\(C\)). According to Bolukbasi, Chang, Zou, Saligrama, and Kalai (2016), the first eigenvalue is significantly larger than the rest and so the top PC is hypothesized to capture the gender subspace. So \(k=1\) is chosen and our resulting gender subspace \(B\) is thus simply a direction. \(C\) is calculated in the following way: \[C:=\sum_{i=1}^n \sum_{w\in D_i}(\vec{w}-\mu_i)^T(\vec{w}-\mu_i)/|D_i|\] where \(\mu_i := \sum_{w\in D_i}\vec{w}/|D_i|\) are the means of the defining sets \(D_1, D_2, ..., D_n \subset W\).
 
 As a second step Hard Debias neutralizes and equalizes the word embeddings. Neutralizing means to transform each word embedding \(\vec{w}\) such that every word \(w\in N\) has zero projection in the gender subspace. So for each word \(w\in N\) in a set of neutral words \(N \subseteq W\), we re-embed \(\vec{w}\): \[\vec{w}:=(\vec{w}-\vec{w}_B)/||\vec{w}-\vec{w}_B||\]. The equalize step ensures that desired analogical properties hold for both female and male words contained in the equality sets \(\mathcal{E}=\{E_1,E_2,...,E_m\}\) where each \(E_i \subseteq W\). For example, after debiasing we would like the embeddings of the pair \(E=\{grandmother, grandfather\}\) contained in the equality sets to be equidistant from the embedding of ``babysit'' (Bolukbasi, Chang, Zou, Saligrama, \& Kalai, 2016). This is enforced by equating each set of words \(E\in \mathcal{E}\) outside of \(B\) to their simple average \(\nu:=\mu-\mu_B\) where \(\mu:=\sum_{w\in E}w/|E|\) before adjusting vectors so that they are unit length. So for each word \(w\in E\), \(\vec{w}\) is re-embedded to \[\vec{w}:=\nu+\sqrt{1-||\nu||^2}\frac{\vec{w}_B-\mu_B}{||\vec{w}_B-\mu_B||}\].
 With the help of the original paper, we were successfully able to re-implement Hard Debias.
@@ -237,17 +227,18 @@ With the help of the original paper, we were successfully able to re-implement H
 \hypertarget{double-hard-debias-meike}{%
 \subsubsection{Double-Hard Debias (Meike)}\label{double-hard-debias-meike}}
 
-As previously mentioned, the code provided by the authors' was rather unsatisfactory and superficial, which is why we were mostly guided by the Pseudocode provided in the paper (Wang et al., 2020).
+As previously mentioned, the code provided by the authors' was rather unsatisfactory, which is why we were guided by the Pseudocode provided in the paper (Wang et al., 2020) in the implementation of Double-Hard Debias.
+The Double-Hard Debias algorithm is about removing two different components from embeddings. The first one supposedly encoding frequency information, the second one resembling the gender direction, as proposed by Bolukbasi, Chang, Zou, Saligrama, and Kalai (2016).
+In earlier work, Mu and Viswanath (2018) have shown, that further dimension reduction of word embeddings actually increases the linguistic regularities they capture. To do so, they first subtracted the common mean vector \(\mu = \frac{1}{|V|}\sum_{\vec{w} \in V}\vec{w}\), with \(V\) being the set of word embeddings \(\vec{w}\), from all embeddings. Then, a few top principal components of the embedding space are identified and removed. The resulting word embeddings actually proof to serve as stronger linguistic representations as the unprocessed ones. During the application of their algorithm, Mu, Bhat, and Viswanath (2018) noticed, that some of the top PCA directions seemed to encode frequency to a significant degree.
+Wang et al. (2020) ground their algorithm on those findings and apply those steps within their algorithm, claiming them to be a feasible method to identify directions of the embedding space encoding word frequency.
 
-The Double-Hard Debias algorithm is about removing two different directions from the embeddings. The first one being one supposedly encoding frequency information, the second one being the gender direction, as proposed by Bolukbasi et al. (2016).
-In earlier work, Mu and Viswanath (2018) have shown, that further dimension reduction of word embeddings actually increases the linguistic regularities they capture. To do so, they first subtracted the common mean vector and then identified a few top principal components of the embedding space. After removing both of those components, the resulting word embeddings proof to serve as stronger representations. During the application of their algorithm, Mu and Viswanath (2018) noticed, that some the top PCA directions seemed to encode frequency to a significant degree.
-Wang et al. (2020) base their algorithm mostly on those findings and also apply PCA to their algorithm, claiming that to be a feasible method to identify directions of the embedding space encoding word frequency.
-The first part of the algorithm represents picking the frequency direction that shall ultimatly be removed from all embeddings.This is done in a trial-based set up on only the most biased words (500 male and female). Following Mu and Viswanath's (2018) work, the common mean vector is removed before PCA is applied.
-In the Pseudocode presented, the authors depict the computation of the same number of principal components as the dimensionality that the embeddings in question have. In the provided code, on the other hand, they only compute the top 10 principal components, which is what we ultimately replicated.
-For each of those PCs, the corresponding direction is removed, Hard Debias is applied on those projected embeddings, and performance of the resulting embeddings on the Neighborhood Metric, originally proposed by Gonen and Goldberg (2019), is measured. This Metric and its use is discussed in a more detailed manner in the evaluation part.
-Then, the PC is identified that lead to the best performance on the Neighborhood Metric, here meaning resulting in least biased embeddings.
-This direction, supposedly encoding frequency as well as gender information, is picked out of all candidate principal components for the second part of the algorithm.
-This second part focuses on truly debiasing the full set of word embeddings, first by removing the recently hand-picked frequency direction and then applying Hard Debias to also remove the gender direction.
+The first part of Double-Hard Debias represents identifying the frequency direction that shall ultimatly be picked to be removed from all embeddings. This is done in a trial-based set up and applied only on a subset of most biased words (500 male and female). Following Mu, Bhat, and Viswanath (2018) work, the common mean vector is removed before PCA is applied.
+In the Pseudo code presented, the authors depict calculating the same number of principal components as dimensionality of embeddings. In the provided code, on the other hand, they only compute the top 10 principal components (PCs), which is what we ultimately replicated, especially as the variance that those components capture seems to cap off at around that threshold.
+For each of those PCs, the corresponding direction \(\mathbf{u}\) is removed \(w' = w - (\mathbf{u^{T}}w)\mathbf{u}\), Hard Debias is applied on those projected embeddings, and performance of the resulting embeddings on the Neighborhood Metric, originally proposed by Gonen and Goldberg (2019), is measured. This Metric and its use will be discussed in a more detailed manner in the evaluation part.
+Then, the PC, that leads to the best performance on the Neighborhood Metric, here meaning resulting in least biased embeddings, is identified.
+This direction, supposedly encoding frequency and significantly affecting gender information, is choosen for the second part of the algorithm.
+
+This second part focuses on truly debiasing the full set of word embeddings, first by removing the recently hand-picked frequency direction, supplying embeddings better suited as a starting point for then successfully applying Hard Debias to, resulting in a higher efficacy in removing the gender direction.
 
 \hypertarget{evaluation}{%
 \subsection{Evaluation}\label{evaluation}}
@@ -259,7 +250,7 @@ This part deals with the reproduction of Wang et al. (2020)`s experimental resul
 
 Following Wang et al. (2020) we used GloVe embeddings that were obtained using several different debiasing methods as baselines for our evaluation along with the original, non-debiased embedding.
 
-original GloVe: The original, non-debiased GloVe embedding used and provided by Wang et al. (2020). It was obtained from training on the 2017 January dump of English Wikipedia.
+original GloVe: The original, non-debiased GloVe embedding used and provided by Wang et al. (2020), obtained from training on the 2017 January dump of English Wikipedia.
 
 GN-GloVe: Gender-Neutral GloVe embedding released by Zhao, Zhou, Li, Wang, and Chang (2018). This method restricts gender information in certain dimensions while neutralizing in the remaining dimensions.
 
@@ -280,14 +271,16 @@ Double-Hard-GloVe(replication): Double-Hard debiased GloVe embedding obtained by
 \hypertarget{evaluation-of-debiasing-performance}{%
 \subsubsection{Evaluation of Debiasing Performance}\label{evaluation-of-debiasing-performance}}
 
+Wang et al. (2020) evaluated their embeddings on multiple different tasks to test multiple of the characteristics that embeddings inherit. Even though we were unable to replicate all those tests, we focused on covering the main aspects.
+
 \hypertarget{debiasing-in-downstream-applications}{%
 \subsubsection{Debiasing in Downstream Applications}\label{debiasing-in-downstream-applications}}
 
 \hypertarget{coreference-resolution-meike}{%
 \paragraph{Coreference Resolution (Meike)}\label{coreference-resolution-meike}}
 
-Wang et al. (2020) also evaluated the performance of their resulting embeddings in Coreference systems. Zhao, Wang, Yatskar, Ordonez, and Chang (2018) have shown that ``The physician hired the secretary because he was overwhelmed with clients'' is processed better, because ``he'' relates to ``the physician,'' which is biased with a male gender association. In contrast, non-consistent sentences, such as ``The physician hired the secretary because she was overwhelmed with clients'' showed poorer performance.
-As the code provided by Wang et al. (2020) did not implement this evaluation and we failed to reimplement the original Zhao, Wang, Yatskar, Ordonez, and Chang (2018) Coreference task due to its huge computational demands, we decided to redirect our efforts to other feasible evaluation methods.
+Wang et al. (2020) evaluated the performance of their double-hard debiased embeddings in Coreference systems. Bias in Coreference models has been shown by Zhao, Wang, Yatskar, Ordonez, and Chang (2018), as ``The physician hired the secretary because he was overwhelmed with clients'' is processed better due to the biased association of ``the physician'' to the male gender, allowing it to be easier related to ``he.'' In contrast, non-consistent sentences, such as ``The physician hired the secretary because \emph{she} was overwhelmed with clients'' showed poorer performance. The idea is, that the societal bias of ``the physician'' is implemented within its embedding, thereby influencing model's performance.
+As the code provided by Wang et al. (2020) did not link to this evaluation and we failed to reimplement the original Zhao, Wang, Yatskar, Ordonez, and Chang (2018) Coreference task due to its huge computational demands, we decided to redirect our efforts to other evaluation methods actually feasible to us.
 
 \hypertarget{debiasing-at-embedding-level}{%
 \subsubsection{Debiasing at Embedding Level}\label{debiasing-at-embedding-level}}
@@ -297,18 +290,18 @@ As the code provided by Wang et al. (2020) did not implement this evaluation and
 
 Following along the evaluation of Wang et al. (2020) we tested the bias of different embeddings with the Word Embedding Association Test(Caliskan, Bryson, and Narayanan (2017)). As a permutations test, WEAT takes four sets of words, two sets of so-called target words and two sets of attribute words. It calculates the relative similarity between the target words and the attribute words respectively and outputs in the end how likely it is that this result, the difference between the mean similarities for the different sets, could have been obtained from a non-biased distribution. The two values it returns are the effective size d and the p-value p.~A p-value smaller than 0.05 indicates a significant bias and the bias is considered stronger for a larger effective size.
 
-As part of the evaluation and not direct implementation of the paper we decided to use a pre-implemented version of WEAT for our evaluation. However, instead of re-using the code of Wang et al. (2020) we decided for a different WEAT implementation that is oriented on the original paper by Caliskan, Bryson, and Narayanan (2017).
+As part of the evaluation and not direct implementation of the paper we decided to use a pre-implemented version of WEAT for our evaluation. However, instead of re-using the code of Wang et al. (2020) we opted for a different WEAT implementation that is oriented on the original paper by Caliskan, Bryson, and Narayanan (2017).
 
 Wang et al. (2020) conducted WEAT three times for each embedding, once with the bias ``Career \& Family,'' once with ``Math \& Arts'' and lastly with ``Science \& Arts.'' We replicated all three of these with the word lists taken directly from Caliskan, Bryson, and Narayanan (2017). These include:
+1. ``Career \& Family'':
+Male names: \emph{John, Paul, Mike, Kevin, Steve, Greg, Jeff, Bill}
+Female names: \emph{Amy, Joan, Lisa, Sarah, Diana, Kate, Ann, Donna}
+Career words: \emph{executive, management, professional, corporation, salary, office, business, career}
+Family words: \emph{home, parents, children, family, cousins, marriage, wedding, relatives}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
-\item
-  ``Career \& Family'':
-  Male names: \emph{John, Paul, Mike, Kevin, Steve, Greg, Jeff, Bill}
-  Female names: \emph{Amy, Joan, Lisa, Sarah, Diana, Kate, Ann, Donna}
-  Career words: \emph{executive, management, professional, corporation, salary, office, business, career}
-  Family words: \emph{home, parents, children, family, cousins, marriage, wedding, relatives}
+\setcounter{enumi}{1}
 \item
   ``Math \& Arts'':
   Math words: \emph{math, algebra, geometry, calculus, equations, computation, numbers, addition}
@@ -354,17 +347,17 @@ Strong-Hard-GloVe & 1.547 & 0.0010 & -0.9857 & 0.9754 & -0.5471 & 0.8625\\
 \end{tabular}
 \end{table}
 
-With the WEAT implementation we sued we were able to almost perfectly recreate the results of Wang et al. (2020) for the ``Career \& Family'' word sets. Therefor we assume our implementation to be comparable to that of Wang et al. (2020). Both the effective size and the p-value differ only slightly from the reported values and we can clearly seehat for the Double-Hard debiased embeddings the p-value is larger not only in comparison to the original embedding but also the other debiasing methods. Despite the bias still being significant(p-value \textgreater{} 0.05), it is the least significant for the Double-Hard debiased embedding, which can be inferred from the effective size being the smallest. We were also able to obtain somparable resutls for the Double-Hard debiased embeddings provided by Wang et al. (2020) and for our self-debiased embedding.
+With the WEAT implementation we used we were able to almost perfectly recreate the results of Wang et al. (2020) for the ``Career \& Family'' word sets. Therefore we assume our implementation to be comparable to that of Wang et al. (2020). Both the effective size and the p-value differ only slightly from the reported values and we can clearly seehat for the Double-Hard debiased embeddings the p-value is larger not only in comparison to the original embedding but also the other debiasing methods. Despite the bias still being significant(p-value \textgreater{} 0.05), it is the least significant for the Double-Hard debiased embedding, which can be inferred from the effective size being the smallest. We were also able to obtain somparable resutls for the Double-Hard debiased embeddings provided by Wang et al. (2020) and for our self-debiased embedding.
 
-However for both ``Math \& Arts'' and ``Science \& Arts'' we obtained values for the effective size and the p-value that partly differ significantly from the values reporter by the authors. However, as in Wang et al. (2020), we can see that the bias in ``Math \& Arts'' was already insignificant in the original GloVe embedding but became even less significant through debiasing. For both word sets the bias appears to be insignificant for both Double-Hard debiased embeddings.
+However for both ``Math \& Arts'' and ``Science \& Arts'' we obtained values for the effective size and the p-value that partly differ significantly from the values reported by the authors. However, as in Wang et al. (2020), we can see that the bias in ``Math \& Arts'' was already insignificant in the original GloVe embedding but became even less significant through debiasing. For both word sets the bias appears to be insignificant for both Double-Hard debiased embeddings.
 
 \hypertarget{neighborhood-metric-meike}{%
 \paragraph{Neighborhood Metric (Meike)}\label{neighborhood-metric-meike}}
 
-The Neighborhood Metric was originally introduced by Gonen and Goldberg (2019) and is based on the observation that even though debiased words no longer show their bias in form of a certain characteristic in the gender direction, the bias remains in the form of the grouping of the embeddings. The supposedly ``removed'' bias is still manifasted as those words socially-marked with the same gender will be situated closer to one another in the embedding space (Gonen \& Goldberg, 2019).
-When applying K-means clustering on a number of most biased words, the clustering algorithm easily clusters ``debiased'' embeddings into the correct male and female categories.
-Wang et al. (2020) evaluate these clustering performances by simply counting the samples correctly assigned to the gender bias allegedly removed in debiasing. The alignment score \(a\) is defined as \(a = \frac{1}{2k}\sum_{i=1}^{2k}1[\hat{g_{i}}== g_{i}]\) and set to \(a = max(a, 1-a)\) with \(k\) resembling the number of samples for each gender, \(\hat{g_{i}}\) the estimated and \(g_{i}\) the correct label. According to this definition, an alignment value of 0.5 indicates perfectly unbiased embeddings, as the clustering algorithm failes to replicate the gender pattern (Wang et al., 2020).
-Even though Wang et al. (2020) make use of this metric within their proposed debiasing algorithm, thereby adjusting their embeddings to obtimize the Neighborhood Metric, they also apply it again in the scope of evaluating their debiasing performance. As one would expect, the Double-Hard debiased embeddings therefore do particularly well in comparison to the other Baseline embeddings.
+The Neighborhood Metric was originally introduced by Gonen and Goldberg (2019) and is based on the observation that even though debiased words no longer inherit their bias in form of a specific gender direction, it remains in how embeddings are grouped. The supposedly ``removed'' bias is still manifested as one can observe those words socially-marked with the same gender situated closer to one another in the embedding space (Gonen \& Goldberg, 2019).
+K-means clustering on a number of most biased words can often straightforwardly cluster ``debiased'' embeddings into the correct male and female categories.
+Wang et al. (2020) evaluate K-means clustering performance by simply counting the samples correctly assigned to the gender bias allegedly removed in debiasing. The alignment score \(a\) is defined as \(a = \frac{1}{2k}\sum_{i=1}^{2k}1[\hat{g_{i}}== g_{i}]\) and set to \(a = max(a, 1-a)\) with \(k\) resembling the number of samples for each gender, \(\hat{g_{i}}\) the estimated and \(g_{i}\) the correct label. According to this definition, an alignment score value of 0.5 indicates perfectly unbiased embeddings, as the clustering algorithm failed to replicate the original gender pattern (Wang et al., 2020).
+Even though Wang et al. (2020) make use of this metric within their debiasing algorithm, adjusting their embeddings to optimize performance on the Neighborhood Metric, they also apply it again in the scope of evaluating their debiasing performance in comparison to other embeddings. As one would expect, the Double-Hard debiased embeddings therefore do particularly well in comparison to the other Baseline embeddings.
 
 \begin{table}[tbp]
 
@@ -394,7 +387,7 @@ Strong-Hard-GloVe & 51.00 & 51.80 & 50.25\\
 
 \end{table}
 
-Wang et al. (2020) also applied the tSNE reduction technique on the Top 500 female and male biased words to be able to plot the resulting clusters in two-dimensional space. In the graphic below you can see our plot that shows all the baseline datasets, as well as our Double-Hard debiased embedding and Wang et al. (2020)'s embedding. For the original GloVe embedding, GN-GloVe, GP-GloVe and GP-GN-GloVe the clustering accuracy is still very good meaning that the Top 500 female (lighblue) and male (pink) biased words are still biased after applying the respective debiasing techniques. Our embedding performs equally to the Double-Hard debiased embedding reported by Wang et al. (2020). Hard- and Strong-Hard-GloVe also show comparably little bias.
+Wang et al. (2020) also applied the tSNE reduction technique on the Top 500 female and male biased words to be able to plot the resulting clusters in two-dimensional space. In the graphic below you can see our plot that shows all the baseline datasets, as well as our Double-Hard debiased embedding and Wang et al. (2020)'s embedding. For the original GloVe embedding, GN-GloVe, GP-GloVe and GP-GN-GloVe the clustering accuracy is still very high meaning that the Top 500 female (lighblue) and male (pink) biased words are still biased after applying the respective debiasing techniques. Our embedding performs equally to the Double-Hard debiased embedding reported by Wang et al. (2020). Hard- and Strong-Hard-GloVe also show comparably little bias.
 \includegraphics{evaluation_results/results_tsne.png}
 
 \hypertarget{analysis-of-retaining-word-semantics-kristina}{%
@@ -444,7 +437,7 @@ The results can be inspected in Table 3 and are in line with the results reporte
 \hypertarget{concept-categorization-sonja}{%
 \paragraph{Concept Categorization (Sonja)}\label{concept-categorization-sonja}}
 
-Wang et al. (2020) applied this evaluation method to all the different embedding baselines and their Double-Hard debiased embedding as well. However, we found the code provided by the authors to be incomplete. It was missing the application of the Kmeans algorithm as well as the evaluation of this and due to time constraints we decided not to implement this method as we are confident that we already proved the retaining of word semantics with the Word Analogy Task.
+Wang et al. (2020) applied this evaluation method to all the different embedding baselines and their Double-Hard debiased embedding as well. However, we found the code provided by the authors to be incomplete. It was missing the application of the K-means algorithm as well as the evaluation of this and due to time constraints we decided not to implement this method, confident that we already proved the retaining of word semantics with the Word Analogy Task.
 
 \hypertarget{discussion}{%
 \subsection{Discussion}\label{discussion}}
@@ -477,7 +470,7 @@ Wang et al. (2020) applied this evaluation method to all the different embedding
 Baker, M. (2015). Reproducibility crisis: Blame it on the antibodies. \emph{Nature}, \emph{521}(7552), 274--276. https://doi.org/\url{https://doi.org/10.1038/521274a}
 
 \leavevmode\hypertarget{ref-belz_2021}{}%
-Belz, A., Agarwal, S., Shimorina, A., \& Reiter, E. (2021). \emph{A systematic review of reproducibility research in natural language processing}. Retrieved from \url{http://arxiv.org/abs/2103.07929}
+Belz, A., Agarwal, S., Shimorina, A., \& Reiter, E. (2021). A systematic review of reproducibility research in natural language processing. Retrieved from \url{http://arxiv.org/abs/2103.07929}
 
 \leavevmode\hypertarget{ref-bolukbasi_2016}{}%
 Bolukbasi, T., Chang, K.-W., Zou, J. Y., Saligrama, V., \& Kalai, A. (2016). Man is to computer programmer as woman is to homemaker? Debiasing word embeddings. \emph{CoRR}, \emph{abs/1607.06520}. Retrieved from \url{http://arxiv.org/abs/1607.06520}
@@ -486,52 +479,52 @@ Bolukbasi, T., Chang, K.-W., Zou, J. Y., Saligrama, V., \& Kalai, A. (2016). Man
 Caliskan, A., Bryson, J. J., \& Narayanan, A. (2017). Semantics derived automatically from language corpora contain human-like biases. \emph{Science}, \emph{356}(6334), 183--186. \url{https://doi.org/10.1126/science.aal4230}
 
 \leavevmode\hypertarget{ref-cohen_2018}{}%
-Cohen, K. B., Xia, J., Zweigenbaum, P., Callahan, T., Hargraves, O., Goss, F., \ldots{} Hunter, L. E. (2018). Three dimensions of reproducibility in natural language processing. \emph{Proceedings of the eleventh international conference on language resources and evaluation ({LREC} 2018)}. Miyazaki, Japan: European Language Resources Association (ELRA). Retrieved from \url{https://www.aclweb.org/anthology/L18-1025}
+Cohen, K. B., Xia, J., Zweigenbaum, P., Callahan, T., Hargraves, O., Goss, F., \ldots{} Hunter, L. E. (2018). Three dimensions of reproducibility in natural language processing. In \emph{Proceedings of the eleventh international conference on language resources and evaluation ({LREC} 2018)}. Miyazaki, Japan: European Language Resources Association (ELRA). Retrieved from \url{https://www.aclweb.org/anthology/L18-1025}
 
 \leavevmode\hypertarget{ref-collberg_2015}{}%
-Collberg, C., Proebsting, T., \& Warren, A. M. (2015). \emph{Repeatability and benefaction in computer systems research}. studie. Retrieved from \url{http://reproducibility.cs.arizona.edu/v2/RepeatabilityTR.pdf}
+Collberg, C., Proebsting, T., \& Warren, A. M. (2015). Repeatability and benefaction in computer systems research. studie. Retrieved from \url{http://reproducibility.cs.arizona.edu/v2/RepeatabilityTR.pdf}
 
 \leavevmode\hypertarget{ref-fokkens_2013}{}%
-Fokkens, A., Erp, M. van, Postma, M., Pedersen, T., Vossen, P., \& Freire, N. (2013). Offspring from reproduction problems: What replication failure teaches us. \emph{Proceedings of the 51st annual meeting of the association for computational linguistics (volume 1: Long papers)}, 1691--1701. Sofia, Bulgaria: Association for Computational Linguistics. Retrieved from \url{https://www.aclweb.org/anthology/P13-1166}
+Fokkens, A., Erp, M. van, Postma, M., Pedersen, T., Vossen, P., \& Freire, N. (2013). Offspring from reproduction problems: What replication failure teaches us. In \emph{Proceedings of the 51st annual meeting of the association for computational linguistics (volume 1: Long papers)} (pp. 1691--1701). Sofia, Bulgaria: Association for Computational Linguistics. Retrieved from \url{https://www.aclweb.org/anthology/P13-1166}
 
 \leavevmode\hypertarget{ref-gonen_2019}{}%
-Gonen, H., \& Goldberg, Y. (2019). \emph{Lipstick on a pig: Debiasing methods cover up systematic gender biases in word embeddings but do not remove them}. Retrieved from \url{http://arxiv.org/abs/1903.03862}
+Gonen, H., \& Goldberg, Y. (2019). Lipstick on a pig: Debiasing methods cover up systematic gender biases in word embeddings but do not remove them. Retrieved from \url{http://arxiv.org/abs/1903.03862}
 
 \leavevmode\hypertarget{ref-gong_2018}{}%
-Gong, C., He, D., Tan, X., Qin, T., Wang, L., \& Liu, T.-Y. (2018). FRAGE: Frequency-agnostic word representation. In S. Bengio, H. Wallach, H. Larochelle, K. Grauman, N. Cesa-Bianchi, \& R. Garnett (Eds.), \emph{Advances in neural information processing systems} (Vol. 31, p. ). Curran Associates, Inc. Retrieved from \url{https://proceedings.neurips.cc/paper/2018/file/e555ebe0ce426f7f9b2bef0706315e0c-Paper.pdf}
+Gong, C., He, D., Tan, X., Qin, T., Wang, L., \& Liu, T.-Y. (2018). FRAGE: Frequency-agnostic word representation. In S. Bengio, H. Wallach, H. Larochelle, K. Grauman, N. Cesa-Bianchi, \& R. Garnett (Eds.), \emph{Advances in neural information processing systems} (Vol. 31). Curran Associates, Inc. Retrieved from \url{https://proceedings.neurips.cc/paper/2018/file/e555ebe0ce426f7f9b2bef0706315e0c-Paper.pdf}
 
 \leavevmode\hypertarget{ref-greenwald_1998}{}%
 Greenwald, A. G., McGhee, D. E., \& Schwartz, J. L. K. (1998). Measuring individual differences in implicit cognition: The implicit association test. \emph{Journal of Personality and Social Psychology}, \emph{74}(6), 1464--1480. \url{https://doi.org/10.1037/0022-3514.74.6.1464}
 
 \leavevmode\hypertarget{ref-kaneko_2019}{}%
-Kaneko, M., \& Bollegala, D. (2019). Gender-preserving debiasing for pre-trained word embeddings. \emph{Proceedings of the 57th annual meeting of the association for computational linguistics}, 1641--1650. Florence, Italy: Association for Computational Linguistics. \url{https://doi.org/10.18653/v1/P19-1160}
+Kaneko, M., \& Bollegala, D. (2019). Gender-preserving debiasing for pre-trained word embeddings. In \emph{Proceedings of the 57th annual meeting of the association for computational linguistics} (pp. 1641--1650). Florence, Italy: Association for Computational Linguistics. \url{https://doi.org/10.18653/v1/P19-1160}
 
 \leavevmode\hypertarget{ref-mieskes_2017}{}%
-Mieskes, M. (2017). A quantitative study of data in the {NLP} community. \emph{Proceedings of the first {ACL} workshop on ethics in natural language processing}, 23--29. Valencia, Spain: Association for Computational Linguistics. \url{https://doi.org/10.18653/v1/W17-1603}
+Mieskes, M. (2017). A quantitative study of data in the {NLP} community. In \emph{Proceedings of the first {ACL} workshop on ethics in natural language processing} (pp. 23--29). Valencia, Spain: Association for Computational Linguistics. \url{https://doi.org/10.18653/v1/W17-1603}
 
 \leavevmode\hypertarget{ref-mieskes_2019}{}%
-Mieskes, M., Fort, K., Névéol, A., Grouin, C., \& Cohen, K. B. (2019). {NLP Community Perspectives on Replicability.} \emph{{Recent Advances in Natural Language Processing}}. Varna, Bulgaria. Retrieved from \url{https://hal.archives-ouvertes.fr/hal-02282794}
+Mieskes, M., Fort, K., Névéol, A., Grouin, C., \& Cohen, K. B. (2019). {NLP Community Perspectives on Replicability.} In \emph{{Recent Advances in Natural Language Processing}}. Varna, Bulgaria. Retrieved from \url{https://hal.archives-ouvertes.fr/hal-02282794}
 
 \leavevmode\hypertarget{ref-mikolov2013Google}{}%
-Mikolov, T., Chen, K., Corrado, G., \& Dean, J. (2013). \emph{Efficient estimation of word representations in vector space}. Retrieved from \url{http://arxiv.org/abs/1301.3781}
+Mikolov, T., Chen, K., Corrado, G., \& Dean, J. (2013). Efficient estimation of word representations in vector space. Retrieved from \url{http://arxiv.org/abs/1301.3781}
 
 \leavevmode\hypertarget{ref-mikolov2013MSR}{}%
-Mikolov, T., Yih, W., \& Zweig, G. (2013). Linguistic regularities in continuous space word representations. \emph{Proceedings of the 2013 conference of the north {A}merican chapter of the association for computational linguistics: Human language technologies}, 746--751. Atlanta, Georgia: Association for Computational Linguistics. Retrieved from \url{https://www.aclweb.org/anthology/N13-1090}
+Mikolov, T., Yih, W., \& Zweig, G. (2013). Linguistic regularities in continuous space word representations. In \emph{Proceedings of the 2013 conference of the north {A}merican chapter of the association for computational linguistics: Human language technologies} (pp. 746--751). Atlanta, Georgia: Association for Computational Linguistics. Retrieved from \url{https://www.aclweb.org/anthology/N13-1090}
 
 \leavevmode\hypertarget{ref-mu_2018}{}%
-Mu, J., Bhat, S., \& Viswanath, P. (2018). \emph{All-but-the-top: Simple and effective postprocessing for word representations}. Retrieved from \url{http://arxiv.org/abs/1702.01417}
+Mu, J., Bhat, S., \& Viswanath, P. (2018). All-but-the-top: Simple and effective postprocessing for word representations. Retrieved from \url{http://arxiv.org/abs/1702.01417}
 
 \leavevmode\hypertarget{ref-vaswani_2017}{}%
-Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., \ldots{} Polosukhin, I. (2017). \emph{Attention is all you need}. Retrieved from \url{http://arxiv.org/abs/1706.03762}
+Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., \ldots{} Polosukhin, I. (2017). Attention is all you need. Retrieved from \url{http://arxiv.org/abs/1706.03762}
 
 \leavevmode\hypertarget{ref-wang_2020}{}%
-Wang, T., Lin, X. V., Rajani, N. F., McCann, B., Ordonez, V., \& Xiong, C. (2020). Double-hard debias: Tailoring word embeddings for gender bias mitigation. \emph{Association for computational linguistics (ACL)}.
+Wang, T., Lin, X. V., Rajani, N. F., McCann, B., Ordonez, V., \& Xiong, C. (2020). Double-hard debias: Tailoring word embeddings for gender bias mitigation. In \emph{Association for computational linguistics (ACL)}.
 
 \leavevmode\hypertarget{ref-zhao_2018a}{}%
-Zhao, J., Wang, T., Yatskar, M., Ordonez, V., \& Chang, K.-W. (2018, January). \emph{Gender bias in coreference resolution: Evaluation and debiasing methods}. 15--20. \url{https://doi.org/10.18653/v1/N18-2003}
+Zhao, J., Wang, T., Yatskar, M., Ordonez, V., \& Chang, K.-W. (2018). Gender bias in coreference resolution: Evaluation and debiasing methods (pp. 15--20). \url{https://doi.org/10.18653/v1/N18-2003}
 
 \leavevmode\hypertarget{ref-zhao_2018b}{}%
-Zhao, J., Zhou, Y., Li, Z., Wang, W., \& Chang, K.-W. (2018). Learning gender-neutral word embeddings. \emph{Proceedings of the 2018 conference on empirical methods in natural language processing}, 4847--4853. Brussels, Belgium: Association for Computational Linguistics. \url{https://doi.org/10.18653/v1/D18-1521}
+Zhao, J., Zhou, Y., Li, Z., Wang, W., \& Chang, K.-W. (2018). Learning gender-neutral word embeddings. In \emph{Proceedings of the 2018 conference on empirical methods in natural language processing} (pp. 4847--4853). Brussels, Belgium: Association for Computational Linguistics. \url{https://doi.org/10.18653/v1/D18-1521}
 
 \end{CSLReferences}
 
