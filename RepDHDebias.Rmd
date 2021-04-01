@@ -99,10 +99,10 @@ This part deals with the reproduction of the experimental results by @wang_2020 
 
 ```{r load dataframes}
 # load dataframes (computed in Evaluations.ipynb)
-weat_results <- read.csv('evaluation_results/results_weat.csv')
-nm_results <- read.csv('evaluation_results/results_nm.csv')
-msr_results <- read.csv('evaluation_results/results_msr.csv')
-gg_results <- read.csv('evaluation_results/results_gg.csv')
+weat_results <- read.csv('code/evaluation_results/results_weat.csv')
+nm_results <- read.csv('code/evaluation_results/results_nm.csv')
+msr_results <- read.csv('code/evaluation_results/results_msr.csv')
+gg_results <- read.csv('code/evaluation_results/results_gg.csv')
 ```
 
 ### Baselines
@@ -168,7 +168,7 @@ apa_table(nm_results, col.names = c('Embeddings', 'Top 100', 'Top 500', 'Top 100
 ```
 
 ```{r tsne plot}
-knitr::include_graphics("evaluation_results/results_tsne.png")
+knitr::include_graphics("code/evaluation_results/results_tsne.png")
 ```
 In the graphic above you can see a plot that shows all the baseline datasets, as well as our Double-Hard debiased embedding and @wang_2020's embedding. For the original GloVe embedding, GN-GloVe, GP-GloVe and GP-GN-GloVe the clustering accuracy is still very high, meaning that the top 500 female (lighblue) and male (pink) biased words are still biased after applying the respective debiasing techniques.
 
@@ -187,6 +187,7 @@ apa_table(ana_results, col.names = c('Embeddings', 'MSR', 'Sem', 'Syn', 'Total')
 The results can be inspected in Table 3 and are in line with the results reported by @wang_2020. What is interesting is that our replicated Double-Hard debiased embedding scores best in all word analogy tasks and even outperforms the original GloVe embedding.
 
 #### Concept Categorization
+For Concept Categorization a set of words is provided where each word is assigned to one of $k$ classes. After clustering by spacial closeness in the embedding space, it is evaluated how many of the words of the same class are assigned to the same cluster. A high accuracy suggests that the words relating to the same concept have similar embeddings and this is a desirable trait of an embedding space.
 <!-- MK: kurz erklären was die Idee hinter Concept Categorization ist? Allein, weil wir es bei den anderen Evaluation methods (und auch bei Coreference) auch machen?-->
 @wang_2020 applied this evaluation method to all the different embedding baselines and their Double-Hard debiased embedding as well. However, we found the code provided by the authors to be incomplete. It was missing major parts, thereby hindering us from adequately replicating its application and due to time constraints we decided not to implement this method.
 
@@ -209,6 +210,11 @@ The results can be inspected in Table 3 and are in line with the results reporte
   - very poor code quality: readability, mismatchs to paper; kind of an example why replications often fail, we could not replicate everything either
   - uploaded notebook only exemplary
 -->
+The code provided by @wang_2020 was incomplete at several points which hindered both our implementation of the Double-Hard Debias method and the Evaluation. For example the authors' notebook `GloVe_Debias` only showcases the application of Double-Hard Debias but does not provide the actual embedding that was used by @wang_2020 in the evaluation as a result. This can be seen as several pre-processing steps are applied in `GloVe_Debias` such as the restriction of the vocabulary to 50.000 words or the removal of words containing digits. These steps go unmentioned in @wang_2020's documentation and were not applied in the missing code that actually resulted in the Double-Hard debiased embedding as this is not restricted and of the same length as the original embedding. We decided to adopt some of the pre-processing steps oriented on their github repository for computational reasons.
+We also noted that from the code provided by @wang_2020 it was not apparent whether they used the word pairs from `equalize_pairs` or those from the combination of `male_word_file` and `female_word_file` for the equalization step of the Hard debias method. We were able to report that this does not change the results, however it is another example of ill documentation. 
+At many points throughout the evaluations, most noticeably the analysis of retaining word semantics, we were confronted with the `web` module used by @wang_2020. However the authors did not provide this module, neither did they link or even specify where the datasets and functions included could be found. This resulted in the need of self-implementing some functions as well as fundiing the datasets they used and pre-processing them such that they were usable with @wang_2020's functions. Due to time constraints we were not able to cover everything included in this module which lead to us not implementing the Concept Categorization for our evaluation.
+Further, @wang_2020 supplied no code of their evaluation using the coreference system. On Github the authors provided several links and suggestions how to replicate this, however no details were provided and the recreation of this proved time and resource intensive. Therefor we were not able to recreate this part of the evaluation either.
+We obtained results for three parts of the evaluation, namely WEAT, the Neighborhood Metric and the Word Analogy Task. For the Neighborhood Metric we obtained results that closely resemble those of @wang_2020. Similarly we can report results comparable to those of the authors for the Word Analogy Task. However, after applying WEAT we obtained values that differ from those of @wang_2020 for two of three word sets. The closely matching values we obtained for *Caree & Family* suggest a good replication of the authors' results. The differences for the other word sets do not necessarily change the interpretation but are still concerning.
 
 Preprocessing is one of the main aspects not typically reported in scientific NLP papers that can cause experimental variation identified by @fokkens_2013. In line with this, the paper by @wang_2020 did not specify how the relevant datasets were preprocessed. This could be one of the reasons why our results deviate from the results obtained by the original authors. While we were able to reproduce the main conclusions and findings of the paper, we were not able to reproduce concrete values. As @mieskes_2019 point out: "Experiments in replication fail more often than not." Whereas the replication attempt described in this report was not a complete failure, many difficulties were identified during the process of replication due to incomplete documentation of the original study and lack of provided code. The main reasons for this appear to be common in the field: incomplete documentation, missing files and non-working links [see @mieskes_2017; @collberg_2015].
 
