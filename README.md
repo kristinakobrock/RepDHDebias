@@ -6,7 +6,7 @@ This project is a re-implementation of Wang et al. (2020). It aimed to replicate
 Python 3
 
 ## Data
-All required datasets are provided except for the Double-Hard debiased embedding obtained by the original authors (needed for the evaluation). Please download the file `glove_dhd.p` [here](www.cs.virginia.edu/~tw8cb/word_embeddings/) and save it to the folder "Code" without changing the file name.
+All required datasets are provided except for the Double-Hard debiased embedding obtained by the original authors (needed for the evaluation). Please download the file `glove_dhd.p` [here](www.cs.virginia.edu/~tw8cb/word_embeddings/) and save it to the folder `Code` without changing the file name.
 
 ## Code
 Please find all code in this folder. 
