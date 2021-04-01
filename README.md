@@ -1,5 +1,5 @@
 # RepDHDebias
-**Re-implementation of [Wang et al. (2020): Double-Hard Debias: Tailoring Word Embeddings for Gender Bias Mitigation](https://arxiv.org/abs/2005.00965)**  
+**Re-implementation of [Wang et al. (2020): "Double-Hard Debias: Tailoring Word Embeddings for Gender Bias Mitigation"](https://arxiv.org/abs/2005.00965)**  
 This project is a re-implementation of Wang et al. (2020). It aimed to replicate the proposed **Double-Hard Debias** algorithm and to reproduce the evaluation results reported in the original paper.
 
 ## Requirements
