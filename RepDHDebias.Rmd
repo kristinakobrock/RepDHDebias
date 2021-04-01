@@ -213,6 +213,8 @@ The results can be inspected in Table 3 and are in line with the results reporte
   - uploaded notebook only exemplary
 -->
 
+Preprocessing is one of the main aspects not typically reported in scientific NLP papers that can cause experimental variation identified by @fokkens_2013. In line with this, the paper by @wang_2020 did not specify how the relevant datasets were preprocessed. This could be one of the reasons why our results deviate from the results obtained by the original authors. While we were able to reproduce the main conclusions and findings of the paper, we were not able to reproduce concrete values. As @mieskes_2019 point out: "Experiments in replication fail more often than not." Whereas the replication attempt described in this report was not a complete failure, many difficulties were identified during the process of replication due to incomplete documentation of the original study and lack of provided code. The main reasons for this appear to be common in the field: incomplete documentation, missing files and non-working links [see @mieskes_2017, @collberg_2015].
+
 ## Conclusion (kris)
 <!-- summarize the main discussion points-->
 
