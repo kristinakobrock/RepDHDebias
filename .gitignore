@@ -5,6 +5,6 @@
 # ignore automatically generated pycache files
 __pycache__/
 # ignore non-zipped generated debiased embeddings
-code/debiased.p
+debiased.p
 # can't push due to large size:
-code/glove_dhd.p
+glove_dhd.p
