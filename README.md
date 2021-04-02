@@ -8,7 +8,7 @@ Python 3
 ## Data
 All required datasets are provided except for the Double-Hard debiased embedding obtained by the original authors (needed for the evaluation). Please download the file `glove_dhd.p` [here](www.cs.virginia.edu/~tw8cb/word_embeddings/) and save it to the main folder without changing the file name.
 * [`ana_files`](https://github.com/KrisKob/RepDHDebias/tree/main/ana_files): This folder contains the files needed for the word analogy tasks (evaluation).
-* [`evaluation_results`](https://github.com/KrisKob/RepDHDebias/tree/main/evaluation_results): This folder contains the .csv-files of the main evaluation results.
+* [`evaluation_results`](https://github.com/KrisKob/RepDHDebias/tree/main/evaluation_results): This folder contains .csv-files of the main evaluation results.
 
 ## Code
 You can find all code in the main folder. Please view the notebooks for a demonstration of how the code works:
